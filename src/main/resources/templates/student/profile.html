@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>My Profile - PlaceHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
+.nav{flex:1;padding:12px 8px}
+.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
+.nav a:hover,.nav a.active{background:#334155;color:#fff}
+.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
+.sidebar-foot{padding:12px;border-top:1px solid #334155}
+.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
+.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
+.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
+.content{padding:24px;flex:1}
+.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
+.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px}
+.card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:16px}
+.avatar{width:70px;height:70px;border-radius:50%;background:#2563eb;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.profile-name{text-align:center;font-size:17px;font-weight:700;color:#1e293b;margin-bottom:4px}
+.profile-email{text-align:center;font-size:13px;color:#64748b;margin-bottom:12px}
+.badge{display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700}
+.b-green{background:#dcfce7;color:#166534}
+.b-yellow{background:#fef9c3;color:#713f12}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.info-item{padding:8px 0;border-bottom:1px solid #f1f5f9}
+.info-item label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px}
+.info-item span{font-size:13px;font-weight:600;color:#1e293b}
+.skill-tag{display:inline-block;background:#ede9fe;color:#6d28d9;padding:3px 9px;border-radius:4px;font-size:11px;font-weight:600;margin:2px}
+.grp{margin-bottom:14px}
+label.form-label{display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+input{width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none}
+input:focus{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.1)}
+.btn{display:inline-block;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db;font-size:12px;padding:6px 12px}
+.note{font-size:12px;color:#94a3b8;margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">🎓 PlaceHub</div>
+  <div class="nav">
+    <div class="nav-section">Student Menu</div>
+    <a href="/student/dashboard">🏠 Dashboard</a>
+    <a href="/student/jobs">🔍 Browse Jobs</a>
+    <a href="/student/applications">📄 My Applications</a>
+    <a href="/student/profile" class="active">👤 My Profile</a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-info">
+      <div class="user-name" th:text="${student.user.name}">Student</div>
+      <div th:text="${student.rollNumber}">Roll No</div>
+    </div>
+    <a href="/auth/logout" class="logout">Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar"><h1>My Profile</h1></div>
+  <div class="content">
+    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
+    <div class="grid2">
+
+      <!-- Profile Summary Card -->
+      <div class="card">
+        <div class="avatar" th:text="${#strings.substring(student.user.name,0,1).toUpperCase()}">R</div>
+        <div class="profile-name" th:text="${student.user.name}">Name</div>
+        <div class="profile-email" th:text="${student.user.email}">email</div>
+        <div style="text-align:center">
+          <span class="badge"
+            th:classappend="${student.placementStatus.name() == 'PLACED'} ? 'b-green' : 'b-yellow'"
+            th:text="${student.placementStatus.name().replace('_',' ')}">Status</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-item"><label>Roll Number</label><span th:text="${student.rollNumber}">-</span></div>
+          <div class="info-item"><label>Department</label><span th:text="${student.department}">-</span></div>
+          <div class="info-item"><label>Batch</label><span th:text="${student.batch}">-</span></div>
+          <div class="info-item"><label>CGPA</label><span style="color:#2563eb;font-size:16px;font-weight:700" th:text="${student.cgpa}">-</span></div>
+          <div class="info-item"><label>Backlogs</label><span th:text="${student.backlogs}">0</span></div>
+          <div class="info-item"><label>Phone</label><span th:text="${student.phone != null ? student.phone : '-'}">-</span></div>
+          <div class="info-item"><label>10th %</label><span th:text="${student.tenthPercentage != null ? student.tenthPercentage + '%' : '-'}">-</span></div>
+          <div class="info-item"><label>12th %</label><span th:text="${student.twelfthPercentage != null ? student.twelfthPercentage + '%' : '-'}">-</span></div>
+        </div>
+        <div th:if="${!#lists.isEmpty(student.skills)}" style="margin-top:14px">
+          <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Skills</div>
+          <span th:each="skill : ${student.skills}" class="skill-tag" th:text="${skill}">Skill</span>
+        </div>
+        <div th:if="${student.resumePath != null}" style="margin-top:14px">
+          <a th:href="${student.resumePath}" target="_blank" class="btn btn-outline">📄 View Resume</a>
+        </div>
+        <div th:if="${student.placementStatus.name() == 'PLACED'}" style="margin-top:14px;padding:10px;background:#dcfce7;border-radius:6px">
+          <div style="font-size:12px;font-weight:700;color:#166534">🎉 Placed at <span th:text="${student.placedCompany}">Company</span></div>
+          <div th:if="${student.placementPackage != null}" style="font-size:12px;color:#15803d">Package: <span th:text="${student.placementPackage + ' LPA'}">-</span></div>
+        </div>
+      </div>
+
+      <!-- Edit Form Card -->
+      <div class="card">
+        <div class="card-title">Update Profile</div>
+        <form action="/student/profile/update" method="post">
+          <div class="grp">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" name="phone" th:value="${student.phone}" placeholder="9876543210">
+          </div>
+          <div class="grp">
+            <label class="form-label">Current CGPA</label>
+            <input type="number" name="cgpa" step="0.01" min="0" max="10" th:value="${student.cgpa}" placeholder="8.5">
+          </div>
+          <div class="grp">
+            <label class="form-label">Resume Link (Google Drive / URL)</label>
+            <input type="url" name="resumePath" th:value="${student.resumePath}" placeholder="https://drive.google.com/...">
+          </div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+        <div class="note">
+          ℹ To update roll number, department, or academic details, contact the placement cell administrator.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

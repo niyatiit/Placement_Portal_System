@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Placements - PlaceHub Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
+.nav{flex:1;padding:12px 8px}
+.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
+.nav a:hover,.nav a.active{background:#334155;color:#fff}
+.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
+.sidebar-foot{padding:12px;border-top:1px solid #334155}
+.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
+.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
+.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
+.content{padding:24px;flex:1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.stat{background:#fff;border-radius:8px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid #16a34a}
+.stat-val{font-size:26px;font-weight:700;color:#16a34a}
+.stat-lbl{font-size:12px;color:#64748b;margin-top:3px}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
+.card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8fafc;padding:9px 12px;text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0}
+td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.pkg{display:inline-block;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
+.progress-bar{background:#e2e8f0;border-radius:4px;height:8px;overflow:hidden;margin-top:6px}
+.progress-fill{background:#16a34a;height:100%;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">🎓 PlaceHub</div>
+  <div class="nav">
+    <div class="nav-section">Admin Panel</div>
+    <a href="/admin/dashboard">📊 Dashboard</a>
+    <a href="/admin/students">👨‍🎓 Students</a>
+    <a href="/admin/companies">🏢 Companies</a>
+    <a href="/admin/jobs">💼 Job Postings</a>
+    <a href="/admin/placements" class="active">🏆 Placements</a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-info"><div class="user-name">Admin</div><div>Administrator</div></div>
+    <a href="/auth/logout" class="logout">Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar"><h1>Placement Records</h1></div>
+  <div class="content">
+    <div class="stats">
+      <div class="stat"><div class="stat-val" th:text="${placedCount}">0</div><div class="stat-lbl">Students Placed</div></div>
+      <div class="stat" style="border-left-color:#2563eb"><div class="stat-val" style="color:#2563eb" th:text="${total}">0</div><div class="stat-lbl">Total Students</div></div>
+      <div class="stat" style="border-left-color:#7c3aed">
+        <div class="stat-val" style="color:#7c3aed"
+             th:text="${total > 0 ? #numbers.formatDecimal(placedCount * 100.0 / total,1,1) + '%' : '0%'}">0%</div>
+        <div class="stat-lbl">Placement Rate</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Placement Rate</div>
+      <div class="progress-bar">
+        <div class="progress-fill"
+             th:style="${total > 0 ? 'width:' + (placedCount * 100 / total) + '%' : 'width:0%'}"></div>
+      </div>
+      <div style="font-size:12px;color:#64748b;margin-top:6px">
+        <span th:text="${placedCount}">0</span> placed out of <span th:text="${total}">0</span> students
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Placed Students</div>
+      <table>
+        <thead>
+          <tr><th>Student</th><th>Roll No</th><th>Department</th><th>CGPA</th><th>Company</th><th>Package</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="s : ${placed}">
+            <td>
+              <div style="font-weight:600" th:text="${s.user.name}">Name</div>
+              <div style="font-size:11px;color:#94a3b8" th:text="${s.user.email}">email</div>
+            </td>
+            <td th:text="${s.rollNumber}">-</td>
+            <td th:text="${s.department}">-</td>
+            <td style="font-weight:700;color:#16a34a" th:text="${s.cgpa}">-</td>
+            <td style="font-weight:600;color:#2563eb" th:text="${s.placedCompany}">-</td>
+            <td>
+              <span th:if="${s.placementPackage != null}" class="pkg" th:text="${s.placementPackage + ' LPA'}">-</span>
+              <span th:if="${s.placementPackage == null}" style="color:#94a3b8">-</span>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(placed)}">
+            <td colspan="6" style="text-align:center;color:#94a3b8;padding:32px">No placements recorded yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

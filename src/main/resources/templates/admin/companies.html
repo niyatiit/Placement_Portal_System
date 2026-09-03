@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Companies - PlaceHub Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
+.nav{flex:1;padding:12px 8px}
+.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
+.nav a:hover,.nav a.active{background:#334155;color:#fff}
+.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
+.sidebar-foot{padding:12px;border-top:1px solid #334155}
+.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
+.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
+.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
+.logout:hover{background:#dc2626}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
+.content{padding:24px;flex:1}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
+.card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:14px}
+.pending-item{display:flex;align-items:center;justify-content:space-between;padding:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;margin-bottom:10px}
+.pending-name{font-weight:700;color:#1e293b}
+.pending-sub{font-size:12px;color:#64748b;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8fafc;padding:9px 12px;text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0}
+td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.b-green{background:#dcfce7;color:#166534}
+.b-yellow{background:#fef9c3;color:#713f12}
+.b-red{background:#fee2e2;color:#991b1b}
+.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none;margin-right:4px}
+.btn-success{background:#16a34a;color:#fff}
+.btn-success:hover{background:#15803d}
+.btn-danger{background:#dc2626;color:#fff}
+.btn-danger:hover{background:#b91c1c}
+.btn-sm{padding:5px 10px;font-size:11px}
+.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
+.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">🎓 PlaceHub</div>
+  <div class="nav">
+    <div class="nav-section">Admin Panel</div>
+    <a href="/admin/dashboard">📊 Dashboard</a>
+    <a href="/admin/students">👨‍🎓 Students</a>
+    <a href="/admin/companies" class="active">🏢 Companies</a>
+    <a href="/admin/jobs">💼 Job Postings</a>
+    <a href="/admin/placements">🏆 Placements</a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-info"><div class="user-name">Admin</div><div>Administrator</div></div>
+    <a href="/auth/logout" class="logout">Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar"><h1>Company Management</h1></div>
+  <div class="content">
+    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
+
+    <!-- Pending -->
+    <div th:if="${!#lists.isEmpty(pending)}" class="card">
+      <div class="card-title" style="color:#c2410c">⏳ Pending Verification (<span th:text="${#lists.size(pending)}">0</span>)</div>
+      <div th:each="c : ${pending}" class="pending-item">
+        <div>
+          <div class="pending-name" th:text="${c.companyName}">Company</div>
+          <div class="pending-sub" th:text="${c.industry + ' — ' + (c.location != null ? c.location : 'N/A')}">Industry</div>
+          <div class="pending-sub" th:text="${c.user.email}">email</div>
+        </div>
+        <div>
+          <form th:action="@{'/admin/companies/' + ${c.id} + '/verify'}" method="post" style="display:inline">
+            <input type="hidden" name="approved" value="true">
+            <button type="submit" class="btn btn-success btn-sm">✓ Approve</button>
+          </form>
+          <form th:action="@{'/admin/companies/' + ${c.id} + '/verify'}" method="post" style="display:inline">
+            <input type="hidden" name="approved" value="false">
+            <button type="submit" class="btn btn-danger btn-sm">✗ Reject</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- All companies table -->
+    <div class="card">
+      <div class="card-title">All Companies (<span th:text="${#lists.size(companies)}">0</span>)</div>
+      <table>
+        <thead>
+          <tr><th>Company</th><th>Industry</th><th>Location</th><th>Contact</th><th>Website</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="c : ${companies}">
+            <td>
+              <div style="font-weight:700" th:text="${c.companyName}">Name</div>
+              <div style="font-size:11px;color:#94a3b8" th:text="${c.user.email}">email</div>
+            </td>
+            <td th:text="${c.industry != null ? c.industry : '-'}">-</td>
+            <td th:text="${c.location != null ? c.location : '-'}">-</td>
+            <td>
+              <div th:text="${c.contactPerson != null ? c.contactPerson : '-'}">-</div>
+              <div style="font-size:11px;color:#94a3b8" th:text="${c.phone != null ? c.phone : ''}">-</div>
+            </td>
+            <td>
+              <a th:if="${c.website != null}" th:href="${c.website}" target="_blank"
+                 style="color:#2563eb;font-size:12px">Visit ↗</a>
+              <span th:if="${c.website == null}" style="color:#94a3b8">-</span>
+            </td>
+            <td>
+              <span class="badge"
+                th:classappend="${c.verificationStatus.name() == 'VERIFIED'} ? 'b-green' : (${c.verificationStatus.name() == 'PENDING'} ? 'b-yellow' : 'b-red')"
+                th:text="${c.verificationStatus.name()}">-</span>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(companies)}">
+            <td colspan="6" style="text-align:center;color:#94a3b8;padding:32px">No companies yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

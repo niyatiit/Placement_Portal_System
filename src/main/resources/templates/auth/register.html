@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Register - PlaceHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;padding:30px 16px}
+.card{background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);max-width:580px;margin:0 auto;padding:36px}
+.logo{text-align:center;font-size:24px;font-weight:700;color:#2563eb;margin-bottom:6px}
+.sub{text-align:center;color:#64748b;font-size:13px;margin-bottom:22px}
+.tabs{display:flex;border-bottom:2px solid #e5e7eb;margin-bottom:22px}
+.tab{flex:1;text-align:center;padding:10px;font-size:14px;font-weight:700;cursor:pointer;color:#94a3b8;text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#2563eb;border-bottom-color:#2563eb}
+.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:14px}
+.alert-err{background:#fee2e2;color:#991b1b}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grp{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none}
+input:focus,select:focus{border-color:#2563eb}
+textarea{resize:vertical;height:68px}
+.btn{width:100%;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
+.btn:hover{background:#1d4ed8}
+.link{text-align:center;margin-top:14px;font-size:13px;color:#64748b}
+.link a{color:#2563eb;text-decoration:none;font-weight:700}
+.note{font-size:11px;color:#f59e0b;margin-top:8px;text-align:center}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🎓 PlaceHub</div>
+  <div class="sub">Create your account</div>
+
+  <div th:if="${error}" class="alert alert-err" th:text="${error}"></div>
+
+  <div class="tabs">
+    <a class="tab" th:classappend="${type == 'student'} ? ' active'" href="/auth/register?type=student">👨‍🎓 Student</a>
+    <a class="tab" th:classappend="${type == 'company'} ? ' active'" href="/auth/register?type=company">🏢 Company</a>
+  </div>
+
+  <!-- STUDENT -->
+  <div th:if="${type == 'student'}">
+    <form action="/auth/register/student" method="post">
+      <div class="grid2">
+        <div class="grp"><label>Full Name *</label><input name="name" placeholder="Rahul Sharma" required></div>
+        <div class="grp"><label>Roll Number *</label><input name="rollNumber" placeholder="CS2021001" required></div>
+        <div class="grp"><label>Email *</label><input type="email" name="email" placeholder="you@email.com" required></div>
+        <div class="grp"><label>Password *</label><input type="password" name="password" placeholder="Min 6 chars" required></div>
+        <div class="grp"><label>Department *</label><input name="department" placeholder="Computer Science" required></div>
+        <div class="grp"><label>Batch *</label><input name="batch" placeholder="2021-2025" required></div>
+        <div class="grp"><label>CGPA *</label><input type="number" name="cgpa" step="0.01" min="0" max="10" placeholder="8.5" required></div>
+        <div class="grp"><label>Backlogs</label><input type="number" name="backlogs" value="0" min="0"></div>
+        <div class="grp"><label>Phone</label><input name="phone" placeholder="9876543210"></div>
+        <div class="grp"><label>10th %</label><input type="number" name="tenthPercentage" step="0.01" placeholder="92.0"></div>
+      </div>
+      <div class="grp"><label>12th %</label><input type="number" name="twelfthPercentage" step="0.01" placeholder="88.0"></div>
+      <button type="submit" class="btn">Register as Student</button>
+    </form>
+  </div>
+
+  <!-- COMPANY -->
+  <div th:if="${type == 'company'}">
+    <form action="/auth/register/company" method="post">
+      <div class="grid2">
+        <div class="grp"><label>Company Name *</label><input name="companyName" placeholder="TechCorp Ltd" required></div>
+        <div class="grp"><label>Industry</label><input name="industry" placeholder="Information Technology"></div>
+        <div class="grp"><label>Email *</label><input type="email" name="email" placeholder="hr@company.com" required></div>
+        <div class="grp"><label>Password *</label><input type="password" name="password" placeholder="Min 6 chars" required></div>
+        <div class="grp"><label>Location</label><input name="location" placeholder="Bangalore"></div>
+        <div class="grp"><label>Phone</label><input name="phone" placeholder="080-12345678"></div>
+        <div class="grp"><label>Contact Person</label><input name="contactPerson" placeholder="HR Manager Name"></div>
+        <div class="grp"><label>Website</label><input name="website" placeholder="https://company.com"></div>
+      </div>
+      <div class="grp"><label>Description</label><textarea name="description" placeholder="Brief company description..."></textarea></div>
+      <button type="submit" class="btn">Register Company</button>
+      <p class="note">⚠ Company accounts require admin approval before you can login.</p>
+    </form>
+  </div>
+
+  <div class="link">Already have an account? <a href="/auth/login">Login here</a></div>
+</div>
+</body>
+</html>

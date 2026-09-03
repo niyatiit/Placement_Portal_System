@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Browse Jobs - PlaceHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
+.nav{flex:1;padding:12px 8px}
+.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
+.nav a:hover,.nav a.active{background:#334155;color:#fff}
+.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
+.sidebar-foot{padding:12px;border-top:1px solid #334155}
+.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
+.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
+.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
+.content{padding:24px;flex:1}
+.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
+.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.a-err{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column}
+.job-card:hover{border-color:#2563eb;box-shadow:0 4px 12px rgba(37,99,235,.1)}
+.job-co{font-size:12px;color:#64748b;margin-bottom:3px}
+.job-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:8px}
+.job-desc{font-size:12px;color:#64748b;margin-bottom:10px;line-height:1.5;flex:1}
+.job-meta{font-size:12px;color:#94a3b8;margin:3px 0}
+.job-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9}
+.pkg{display:inline-block;background:#dcfce7;color:#166534;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.b-green{background:#dcfce7;color:#166534}
+.b-blue{background:#dbeafe;color:#1e40af}
+.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-sm{padding:5px 10px;font-size:12px}
+.empty{text-align:center;color:#94a3b8;padding:60px 20px;background:#fff;border-radius:8px;border:1px solid #e2e8f0}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.eligibility-info{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#1e40af}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">🎓 PlaceHub</div>
+  <div class="nav">
+    <div class="nav-section">Student Menu</div>
+    <a href="/student/dashboard">🏠 Dashboard</a>
+    <a href="/student/jobs" class="active">🔍 Browse Jobs</a>
+    <a href="/student/applications">📄 My Applications</a>
+    <a href="/student/profile">👤 My Profile</a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-info">
+      <div class="user-name" th:text="${student.user.name}">Student</div>
+      <div th:text="${student.rollNumber}">Roll No</div>
+    </div>
+    <a href="/auth/logout" class="logout">Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <h1>Browse Jobs</h1>
+    <span style="font-size:13px;color:#64748b"><span th:text="${#lists.size(jobs)}">0</span> eligible jobs found</span>
+  </div>
+  <div class="content">
+    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
+    <div th:if="${error}" class="alert a-err" th:text="${error}"></div>
+
+    <div class="eligibility-info">
+      ℹ Jobs shown below are filtered based on your CGPA (<strong th:text="${student.cgpa}">0</strong>) and backlogs (<strong th:text="${student.backlogs}">0</strong>).
+    </div>
+
+    <div th:if="${#lists.isEmpty(jobs)}" class="empty">
+      <div class="empty-icon">🔍</div>
+      <div style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:8px">No Eligible Jobs Found</div>
+      <div>Jobs are matched based on your CGPA and backlogs. Check back later for new postings.</div>
+    </div>
+
+    <div class="jobs-grid">
+      <div th:each="job : ${jobs}" class="job-card">
+        <div class="job-co" th:text="${job.company.companyName}">Company</div>
+        <div class="job-title" th:text="${job.title}">Title</div>
+        <div class="job-desc" th:text="${#strings.abbreviate(job.description, 110)}">Description</div>
+        <div class="job-meta">📍 <span th:text="${job.location != null ? job.location : 'Not specified'}">Location</span></div>
+        <div class="job-meta">💼 <span th:text="${job.jobType.name().replace('_',' ')}">Type</span></div>
+        <div class="job-meta">🎓 Min CGPA: <span th:text="${job.minCgpa}">0</span></div>
+        <div class="job-meta">📅 Deadline: <span th:text="${job.applicationDeadline}">Date</span></div>
+        <div th:if="${job.driveDate != null}" class="job-meta">📆 Drive: <span th:text="${job.driveDate}">Date</span></div>
+        <div class="job-footer">
+          <span class="pkg" th:text="${job.packageLpa + ' LPA'}">Package</span>
+          <div>
+            <span th:if="${appliedIds.contains(job.id)}" class="badge b-green">✓ Applied</span>
+            <form th:if="${!appliedIds.contains(job.id)}"
+                  th:action="@{'/student/apply/' + ${job.id}}" method="post" style="display:inline">
+              <button type="submit" class="btn btn-primary btn-sm">Apply Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

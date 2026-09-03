@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Applications - PlaceHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
+.nav{flex:1;padding:12px 8px}
+.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
+.nav a:hover,.nav a.active{background:#334155;color:#fff}
+.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
+.sidebar-foot{padding:12px;border-top:1px solid #334155}
+.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
+.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
+.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
+.logout:hover{background:#dc2626}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
+.content{padding:24px;flex:1}
+.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
+.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
+.card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:16px}
+.app-card{border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start}
+.app-card:hover{border-color:#2563eb}
+.avatar{width:42px;height:42px;border-radius:50%;background:#2563eb;color:#fff;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.app-info{flex:1}
+.app-name{font-size:14px;font-weight:700;color:#1e293b}
+.app-email{font-size:11px;color:#64748b}
+.app-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:12px;color:#94a3b8}
+.app-meta span{display:flex;align-items:center;gap:3px}
+.skill-tag{display:inline-block;background:#ede9fe;color:#6d28d9;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;margin:2px}
+.app-actions{flex-shrink:0;display:flex;flex-direction:column;gap:6px;min-width:180px}
+.badge{display:inline-block;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;text-align:center}
+.b-green{background:#dcfce7;color:#166534}
+.b-yellow{background:#fef9c3;color:#713f12}
+.b-red{background:#fee2e2;color:#991b1b}
+.b-blue{background:#dbeafe;color:#1e40af}
+.b-purple{background:#ede9fe;color:#6d28d9}
+.b-orange{background:#fff7ed;color:#c2410c}
+.b-gray{background:#f1f5f9;color:#475569}
+.btn{display:inline-block;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db}
+.btn-outline:hover{background:#f8fafc}
+.btn-sm{padding:5px 10px;font-size:11px}
+select,input{width:100%;padding:7px 9px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;outline:none}
+select:focus,input:focus{border-color:#2563eb}
+.empty{text-align:center;color:#94a3b8;padding:40px;font-size:13px}
+.app-date{font-size:11px;color:#94a3b8;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">🎓 PlaceHub</div>
+  <div class="nav">
+    <div class="nav-section">Company Menu</div>
+    <a href="/company/dashboard">📊 Dashboard</a>
+    <a href="/company/jobs" class="active">💼 My Job Posts</a>
+    <a href="/company/jobs/new">➕ Post New Job</a>
+    <a href="/company/profile">🏢 Company Profile</a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-info">
+      <div class="user-name" th:text="${company.companyName}">Company</div>
+      <div th:text="${company.industry != null ? company.industry : 'Company'}">Industry</div>
+    </div>
+    <a href="/auth/logout" class="logout">Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <h1>Job Applications</h1>
+    <a th:href="@{/company/jobs}" class="btn btn-outline btn-sm">← Back to Jobs</a>
+  </div>
+  <div class="content">
+    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
+
+    <div class="card">
+      <div class="card-title">
+        Applications (<span th:text="${#lists.size(apps)}">0</span>)
+      </div>
+
+      <div th:if="${#lists.isEmpty(apps)}" class="empty">
+        No applications received yet for this job posting.
+      </div>
+
+      <div th:each="app : ${apps}" class="app-card">
+        <!-- Avatar -->
+        <div class="avatar"
+             th:text="${#strings.substring(app.student.user.name,0,1).toUpperCase()}">R</div>
+
+        <!-- Student Info -->
+        <div class="app-info">
+          <div class="app-name" th:text="${app.student.user.name}">Name</div>
+          <div class="app-email" th:text="${app.student.user.email}">email</div>
+          <div class="app-meta">
+            <span>🎫 <span th:text="${app.student.rollNumber}">-</span></span>
+            <span>🏛 <span th:text="${app.student.department}">-</span></span>
+            <span>⭐ CGPA: <strong th:text="${app.student.cgpa}">-</strong></span>
+            <span>⚠ Backlogs: <span th:text="${app.student.backlogs}">0</span></span>
+          </div>
+          <div th:if="${!#lists.isEmpty(app.student.skills)}" style="margin-top:6px">
+            <span th:each="skill : ${app.student.skills}" class="skill-tag" th:text="${skill}">Skill</span>
+          </div>
+          <div th:if="${app.student.resumePath != null}" style="margin-top:8px">
+            <a th:href="${app.student.resumePath}" target="_blank" class="btn btn-outline btn-sm">📄 Resume</a>
+          </div>
+          <div class="app-date">
+            Applied: <span th:text="${app.appliedAt != null ? #temporals.format(app.appliedAt,'dd MMM yyyy') : '-'}">Date</span>
+          </div>
+        </div>
+
+        <!-- Status Update -->
+        <div class="app-actions">
+          <div style="text-align:center;margin-bottom:4px">
+            <span class="badge"
+              th:classappend="${app.status.name() == 'SELECTED'} ? 'b-green' :
+                              (${app.status.name() == 'REJECTED'} ? 'b-red' :
+                              (${app.status.name() == 'APPLIED'} ? 'b-blue' :
+                              (${app.status.name() == 'SHORTLISTED'} ? 'b-yellow' :
+                              (${app.status.name() == 'ON_HOLD'} ? 'b-gray' : 'b-purple'))))"
+              th:text="${app.status.name().replace('_',' ')}">Status</span>
+          </div>
+          <form th:action="@{'/company/applications/' + ${app.id} + '/status'}" method="post">
+            <input type="hidden" name="jobId" th:value="${jobId}">
+            <select name="status" style="margin-bottom:6px">
+              <option th:each="s : ${T(com.placement.portal.model.Application.ApplicationStatus).values()}"
+                      th:value="${s.name()}"
+                      th:text="${s.name().replace('_',' ')}"
+                      th:selected="${s == app.status}">Status</option>
+            </select>
+            <input type="text" name="remarks" placeholder="Remarks (optional)"
+                   th:value="${app.remarks}" style="margin-bottom:6px">
+            <button type="submit" class="btn btn-primary" style="width:100%">Update Status</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><title>Student Dashboard - PlaceHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
+.nav{flex:1;padding:12px 8px}
+.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
+.nav a:hover,.nav a.active{background:#334155;color:#fff}
+.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
+.sidebar-foot{padding:12px;border-top:1px solid #334155}
+.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
+.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
+.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
+.content{padding:24px;flex:1}
+.placed-banner{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border:1px solid #86efac;border-radius:8px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.placed-icon{font-size:36px}
+.placed-text h3{font-size:16px;font-weight:700;color:#166534}
+.placed-text p{font-size:13px;color:#15803d;margin-top:3px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat{background:#fff;border-radius:8px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid #2563eb}
+.stat-val{font-size:26px;font-weight:700;color:#2563eb}
+.stat-lbl{font-size:12px;color:#64748b;margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:0}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:15px;font-weight:700;color:#1e293b}
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.info-item label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px}
+.info-item span{font-size:13px;font-weight:600;color:#1e293b}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.b-green{background:#dcfce7;color:#166534}
+.b-yellow{background:#fef9c3;color:#713f12}
+.b-blue{background:#dbeafe;color:#1e40af}
+.b-red{background:#fee2e2;color:#991b1b}
+.b-purple{background:#ede9fe;color:#6d28d9}
+.skill-tag{display:inline-block;background:#ede9fe;color:#6d28d9;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin:2px}
+.app-item{padding:12px 0;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
+.app-item:last-child{border-bottom:none}
+.app-title{font-size:13px;font-weight:600;color:#1e293b}
+.app-co{font-size:11px;color:#64748b}
+.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
+.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db}
+.btn-outline:hover{background:#f8fafc}
+.btn-sm{padding:5px 10px;font-size:11px}
+.empty{text-align:center;color:#94a3b8;padding:24px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">🎓 PlaceHub</div>
+  <div class="nav">
+    <div class="nav-section">Student Menu</div>
+    <a href="/student/dashboard" class="active">🏠 Dashboard</a>
+    <a href="/student/jobs">🔍 Browse Jobs</a>
+    <a href="/student/applications">📄 My Applications</a>
+    <a href="/student/profile">👤 My Profile</a>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-info">
+      <div class="user-name" th:text="${student.user.name}">Student</div>
+      <div th:text="${student.rollNumber}">Roll No</div>
+    </div>
+    <a href="/auth/logout" class="logout">Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <h1>My Dashboard</h1>
+    <span class="badge"
+      th:classappend="${student.placementStatus.name() == 'PLACED'} ? 'b-green' : 'b-yellow'"
+      th:text="${student.placementStatus.name().replace('_',' ')}">Status</span>
+  </div>
+  <div class="content">
+
+    <!-- Placed Banner -->
+    <div th:if="${student.placementStatus.name() == 'PLACED'}" class="placed-banner">
+      <div class="placed-icon">🎉</div>
+      <div class="placed-text">
+        <h3>Congratulations! You're Placed!</h3>
+        <p>Placed at <strong th:text="${student.placedCompany}">Company</strong>
+          <span th:if="${student.placementPackage != null}"> · <strong th:text="${student.placementPackage + ' LPA'}">Package</strong></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val" th:text="${eligibleJobs}">0</div>
+        <div class="stat-lbl">Eligible Jobs</div>
+      </div>
+      <div class="stat" style="border-left-color:#f59e0b">
+        <div class="stat-val" style="color:#f59e0b" th:text="${applicationCount}">0</div>
+        <div class="stat-lbl">Applications Sent</div>
+      </div>
+      <div class="stat" style="border-left-color:#16a34a">
+        <div class="stat-val" style="color:#16a34a" th:text="${student.cgpa}">0</div>
+        <div class="stat-lbl">My CGPA</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <!-- Profile Summary -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">My Profile</span>
+          <a href="/student/profile" class="btn btn-outline btn-sm">Edit</a>
+        </div>
+        <div class="info-row">
+          <div class="info-item"><label>Roll Number</label><span th:text="${student.rollNumber}">-</span></div>
+          <div class="info-item"><label>Department</label><span th:text="${student.department}">-</span></div>
+          <div class="info-item"><label>Batch</label><span th:text="${student.batch}">-</span></div>
+          <div class="info-item"><label>Backlogs</label><span th:text="${student.backlogs}">0</span></div>
+          <div class="info-item"><label>10th %</label><span th:text="${student.tenthPercentage != null ? student.tenthPercentage + '%' : '-'}">-</span></div>
+          <div class="info-item"><label>12th %</label><span th:text="${student.twelfthPercentage != null ? student.twelfthPercentage + '%' : '-'}">-</span></div>
+        </div>
+        <div th:if="${!#lists.isEmpty(student.skills)}">
+          <label style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px">Skills</label>
+          <span th:each="skill : ${student.skills}" class="skill-tag" th:text="${skill}">Skill</span>
+        </div>
+        <div th:if="${student.resumePath != null}" style="margin-top:12px">
+          <a th:href="${student.resumePath}" target="_blank" class="btn btn-outline btn-sm">📄 View Resume</a>
+        </div>
+      </div>
+
+      <!-- Recent Applications -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recent Applications</span>
+          <a href="/student/applications" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div th:each="app : ${recentApps}" class="app-item">
+          <div>
+            <div class="app-title" th:text="${app.jobPosting.title}">Job Title</div>
+            <div class="app-co" th:text="${app.jobPosting.company.companyName}">Company</div>
+          </div>
+          <span class="badge"
+            th:classappend="${app.status.name() == 'SELECTED'} ? 'b-green' :
+                            (${app.status.name() == 'REJECTED'} ? 'b-red' :
+                            (${app.status.name() == 'APPLIED'} ? 'b-blue' : 'b-purple'))"
+            th:text="${app.status.name().replace('_',' ')}">Status</span>
+        </div>
+        <div th:if="${#lists.isEmpty(recentApps)}" class="empty">
+          No applications yet.<br>
+          <a href="/student/jobs" style="color:#2563eb;text-decoration:none;font-weight:700">Browse Jobs →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
