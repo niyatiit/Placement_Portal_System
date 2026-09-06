@@ -75,20 +75,34 @@ public class CompanyController {
     }
 
     @GetMapping("/jobs/{jobId}/applications")
-    public String viewApps(@PathVariable Long jobId, Model model, Authentication auth) {
-        model.addAttribute("company", getCompany(auth));
-        model.addAttribute("apps", companyService.getAppsForJob(jobId));
-        model.addAttribute("jobId", jobId);
-        return "company/applications";
+    public String viewApps(@PathVariable Long jobId, Model model, Authentication auth, RedirectAttributes ra) {
+        Company c = getCompany(auth);
+        try {
+            var job = companyService.getOwnedJob(c, jobId);
+            model.addAttribute("company", c);
+            model.addAttribute("job", job);
+            model.addAttribute("apps", companyService.getAppsForJob(jobId));
+            model.addAttribute("jobId", jobId);
+            return "company/applications";
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "That job posting could not be found.");
+            return "redirect:/company/jobs";
+        }
     }
 
     @PostMapping("/applications/{appId}/status")
     public String updateStatus(@PathVariable Long appId,
                                @RequestParam Application.ApplicationStatus status,
                                @RequestParam(required = false) String remarks,
-                               @RequestParam Long jobId, RedirectAttributes ra) {
-        companyService.updateStatus(appId, status, remarks);
-        ra.addFlashAttribute("success", "Status updated!");
+                               @RequestParam Long jobId, Authentication auth, RedirectAttributes ra) {
+        Company c = getCompany(auth);
+        try {
+            companyService.getOwnedJob(c, jobId); // ownership check
+            companyService.updateStatus(appId, status, remarks);
+            ra.addFlashAttribute("success", "Status updated!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update status: " + e.getMessage());
+        }
         return "redirect:/company/jobs/" + jobId + "/applications";
     }
 
@@ -96,5 +110,25 @@ public class CompanyController {
     public String profile(Model model, Authentication auth) {
         model.addAttribute("company", getCompany(auth));
         return "company/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam String companyName,
+                                @RequestParam(required = false) String industry,
+                                @RequestParam(required = false) String location,
+                                @RequestParam(required = false) String contactPerson,
+                                @RequestParam(required = false) String phone,
+                                @RequestParam(required = false) String website,
+                                @RequestParam(required = false) String description,
+                                Authentication auth, RedirectAttributes ra) {
+        try {
+            Company c = getCompany(auth);
+            companyService.updateOwnProfile(c.getId(), companyName, industry, location,
+                    contactPerson, phone, website, description);
+            ra.addFlashAttribute("success", "Profile updated successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update profile: " + e.getMessage());
+        }
+        return "redirect:/company/profile";
     }
 }

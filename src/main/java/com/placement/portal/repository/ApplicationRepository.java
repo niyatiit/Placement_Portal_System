@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
-    @Query("SELECT a FROM Application a JOIN FETCH a.jobPosting jp JOIN FETCH jp.company c JOIN FETCH c.user WHERE a.jobPosting = :jobPosting")
+    @Query("SELECT a FROM Application a JOIN FETCH a.jobPosting jp JOIN FETCH jp.company c JOIN FETCH c.user JOIN FETCH a.student s JOIN FETCH s.user WHERE a.jobPosting = :jobPosting")
     List<Application> findByJobPosting(@Param("jobPosting") JobPosting jobPosting);
 
     Optional<Application> findByStudentAndJobPosting(Student student, JobPosting jobPosting);

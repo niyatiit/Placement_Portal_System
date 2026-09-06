@@ -1,102 +1,497 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>My Jobs - PlaceHub</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
-.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
-.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
-.nav{flex:1;padding:12px 8px}
-.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
-.nav a:hover,.nav a.active{background:#334155;color:#fff}
-.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
-.sidebar-foot{padding:12px;border-top:1px solid #334155}
-.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
-.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
-.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
-.logout:hover{background:#dc2626}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
-.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
-.content{padding:24px;flex:1}
-.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
-.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
-.jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.job-card:hover{border-color:#2563eb}
-.job-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.job-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:6px}
-.job-meta{font-size:12px;color:#94a3b8;margin:3px 0}
-.job-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid #f1f5f9}
-.pkg{display:inline-block;background:#dcfce7;color:#166534;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700}
-.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.b-green{background:#dcfce7;color:#166534}
-.b-gray{background:#f1f5f9;color:#475569}
-.b-blue{background:#dbeafe;color:#1e40af}
-.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-primary:hover{background:#1d4ed8}
-.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db}
-.btn-outline:hover{background:#f8fafc}
-.btn-sm{padding:5px 10px;font-size:11px}
-.empty{text-align:center;color:#94a3b8;padding:60px 20px;background:#fff;border-radius:8px;border:1px solid #e2e8f0}
-.empty-icon{font-size:48px;margin-bottom:12px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Job Postings - PlaceHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --sidebar-text: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      border-right: 1px solid #1e293b;
+    }
+
+    .brand {
+      padding: 24px 20px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand span {
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav {
+      flex: 1;
+      padding: 20px 14px;
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #475569;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .nav a:hover {
+      background: var(--sidebar-hover);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .nav a.active {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid #1e293b;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .admin-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: #1e293b;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .admin-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .admin-meta { overflow: hidden; flex: 1; }
+
+    .admin-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .admin-role {
+      font-size: 11px;
+      color: #94a3b8;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+
+    /* Main Area */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+    }
+
+    .topbar-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .content {
+      padding: 32px;
+      flex: 1;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .alert-success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      padding: 56px 20px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state .empty-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+    .empty-state .empty-sub { font-size: 13px; margin-bottom: 18px; }
+
+    /* Job cards grid */
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .job-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .job-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-top {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .badge-active { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-closed { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+    .badge-type { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+    .job-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .job-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .job-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .pkg-pill {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+
+    .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 70px; }
+      .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
+      .main { margin-left: 70px; }
+      .content { padding: 18px; }
+      .jobs-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="brand">🎓 PlaceHub</div>
-  <div class="nav">
-    <div class="nav-section">Company Menu</div>
-    <a href="/company/dashboard">📊 Dashboard</a>
-    <a href="/company/jobs" class="active">💼 My Job Posts</a>
-    <a href="/company/jobs/new">➕ Post New Job</a>
-    <a href="/company/profile">🏢 Company Profile</a>
-  </div>
-  <div class="sidebar-foot">
-    <div class="user-info">
-      <div class="user-name" th:text="${company.companyName}">Company</div>
-      <div th:text="${company.industry != null ? company.industry : 'Company'}">Industry</div>
-    </div>
-    <a href="/auth/logout" class="logout">Logout</a>
-  </div>
-</div>
-<div class="main">
-  <div class="topbar">
-    <h1>My Job Postings</h1>
-    <a href="/company/jobs/new" class="btn btn-primary btn-sm">+ Post New Job</a>
-  </div>
-  <div class="content">
-    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
 
-    <div th:if="${#lists.isEmpty(jobs)}" class="empty">
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🎓</div>
+    <span>PlaceHub</span>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Company Menu</div>
+    <a th:href="@{/company/dashboard}">
+      <span>📊</span>
+      <span>Dashboard</span>
+    </a>
+    <a th:href="@{/company/jobs}" class="active">
+      <span>💼</span>
+      <span>My Job Posts</span>
+    </a>
+    <a th:href="@{/company/jobs/new}">
+      <span>➕</span>
+      <span>Post New Job</span>
+    </a>
+    <a th:href="@{/company/profile}">
+      <span>🏢</span>
+      <span>Company Profile</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-pill">
+      <div class="admin-avatar" th:text="${company.companyName != null and !#strings.isEmpty(company.companyName) ? #strings.substring(company.companyName, 0, 1).toUpperCase() : 'C'}">C</div>
+      <div class="admin-meta">
+        <div class="admin-name" th:text="${company.companyName}">Company</div>
+        <div class="admin-role" th:text="${company.industry != null ? company.industry : 'Company'}">Industry</div>
+      </div>
+    </div>
+    <a th:href="@{/auth/logout}" class="btn-logout">
+      <span>🚪</span>
+      <span>Sign Out</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>My Job Postings</h1>
+      <p>All job openings you've posted for students to apply to.</p>
+    </div>
+    <a th:href="@{/company/jobs/new}" class="btn btn-primary btn-sm">+ Post New Job</a>
+  </header>
+
+  <main class="content">
+
+    <div th:if="${success}" class="alert-banner alert-success">
+      <span style="font-size: 18px;">✅</span>
+      <span th:text="${success}">Success</span>
+    </div>
+
+    <div th:if="${#lists.isEmpty(jobs)}" class="empty-state">
       <div class="empty-icon">💼</div>
-      <div style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:8px">No Job Postings Yet</div>
-      <div style="margin-bottom:16px">Create your first job posting to start receiving applications.</div>
-      <a href="/company/jobs/new" class="btn btn-primary">Post a Job</a>
+      <div class="empty-title">No Job Postings Yet</div>
+      <div class="empty-sub">Create your first job posting to start receiving applications.</div>
+      <a th:href="@{/company/jobs/new}" class="btn btn-primary">Post a Job</a>
     </div>
 
     <div class="jobs-grid">
       <div th:each="job : ${jobs}" class="job-card">
         <div class="job-top">
-          <span class="badge" th:classappend="${job.status.name() == 'ACTIVE'} ? 'b-green' : 'b-gray'" th:text="${job.status.name()}">Status</span>
-          <span class="badge b-blue" th:text="${job.jobType.name().replace('_',' ')}">Type</span>
+          <span class="badge" th:classappend="${job.status.name() == 'ACTIVE'} ? 'badge-active' : 'badge-closed'" th:text="${job.status.name()}">Status</span>
+          <span class="badge badge-type" th:text="${job.jobType.name().replace('_',' ')}">Type</span>
         </div>
         <div class="job-title" th:text="${job.title}">Title</div>
         <div class="job-meta">📍 <span th:text="${job.location != null ? job.location : 'N/A'}">Location</span></div>
-        <div class="job-meta">🎓 Min CGPA: <span th:text="${job.minCgpa}">0</span> &nbsp;·&nbsp; Max Backlogs: <span th:text="${job.maxBacklogs}">0</span></div>
+        <div class="job-meta">🎓 Min CGPA: <strong th:text="${job.minCgpa}">0</strong> &nbsp;·&nbsp; Max Backlogs: <strong th:text="${job.maxBacklogs}">0</strong></div>
         <div class="job-meta">📅 Deadline: <span th:text="${job.applicationDeadline}">Date</span></div>
         <div th:if="${job.driveDate != null}" class="job-meta">📆 Drive Date: <span th:text="${job.driveDate}">Date</span></div>
         <div class="job-footer">
-          <span class="pkg" th:text="${job.packageLpa + ' LPA'}">-</span>
+          <span class="pkg-pill" th:text="${job.packageLpa + ' LPA'}">-</span>
           <a th:href="@{'/company/jobs/' + ${job.id} + '/applications'}" class="btn btn-outline btn-sm">
             👥 View Applications
           </a>
         </div>
       </div>
     </div>
-  </div>
+
+  </main>
 </div>
+
 </body>
 </html>

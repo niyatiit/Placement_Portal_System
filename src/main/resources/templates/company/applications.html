@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Job Applicants - PlaceHub Admin</title>
+  <title>Job Applications - PlaceHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -141,19 +141,17 @@
       width: 36px;
       height: 36px;
       border-radius: 8px;
-      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 14px;
       color: #fff;
+      flex-shrink: 0;
     }
 
-    .admin-meta {
-      overflow: hidden;
-      flex: 1;
-    }
+    .admin-meta { overflow: hidden; flex: 1; }
 
     .admin-name {
       font-size: 13px;
@@ -167,6 +165,9 @@
     .admin-role {
       font-size: 11px;
       color: #94a3b8;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     .btn-logout {
@@ -233,32 +234,20 @@
       flex: 1;
     }
 
-    .btn {
-      display: inline-flex;
+    /* Alerts */
+    .alert-banner {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 16px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid transparent;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-      white-space: nowrap;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
     }
 
-    .btn-outline {
-      background: #ffffff;
-      color: #334155;
-      border-color: #cbd5e1;
-    }
-
-    .btn-outline:hover {
-      background: #f8fafc;
-      border-color: #94a3b8;
-    }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
     /* Job Summary Card */
     .job-summary-card {
@@ -270,21 +259,12 @@
       box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
     }
 
-    .job-summary-title {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .job-summary-sub {
-      font-size: 13px;
-      opacity: 0.9;
-      margin-bottom: 16px;
-    }
+    .job-summary-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .job-summary-sub { font-size: 13px; opacity: 0.9; margin-bottom: 16px; }
 
     .job-summary-stats {
       display: flex;
-      gap: 24px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
@@ -296,7 +276,7 @@
       font-weight: 600;
     }
 
-    /* Cards */
+    /* Card */
     .card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -319,90 +299,87 @@
       color: var(--text-main);
     }
 
-    /* Table */
-    .table-responsive {
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      padding: 48px;
       font-size: 13px;
-      text-align: left;
     }
 
-    thead th {
-      background: #f8fafc;
-      padding: 12px 16px;
-      color: #475569;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    tbody td {
-      padding: 14px 16px;
-      border-bottom: 1px solid #f1f5f9;
-      color: #334155;
-      vertical-align: middle;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    tbody tr:hover td {
-      background: #f8fafc;
-    }
-
-    .student-cell {
+    /* Applicant Card */
+    .app-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
       display: flex;
-      align-items: center;
-      gap: 12px;
+      gap: 18px;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+
+    .app-card:last-child { margin-bottom: 0; }
+
+    .app-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
     }
 
     .avatar-sm {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #4f46e5, #818cf8);
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 15px;
       flex-shrink: 0;
     }
 
-    .student-name {
-      font-weight: 600;
-      color: var(--text-main);
-    }
+    .app-info { flex: 1; min-width: 0; }
+    .app-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .app-email { font-size: 12px; color: var(--text-muted); }
 
-    .student-sub {
+    .app-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
       font-size: 12px;
-      color: var(--text-muted);
+      color: #64748b;
     }
 
-    .cgpa-pill {
-      font-weight: 800;
-      font-size: 14px;
+    .app-meta span { display: flex; align-items: center; gap: 3px; }
+
+    .skill-tag {
+      display: inline-block;
+      background: #ede9fe;
+      color: #6d28d9;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 3px 4px 0 0;
     }
 
-    .cgpa-high { color: #16a34a; }
-    .cgpa-mid { color: #d97706; }
-    .cgpa-low { color: #dc2626; }
+    .app-date { font-size: 11px; color: #94a3b8; margin-top: 8px; }
 
-    /* Status badges */
+    .app-actions {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+    }
+
+    /* Badges */
     .badge {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 4px;
       padding: 4px 10px;
       border-radius: 20px;
@@ -420,11 +397,57 @@
     .badge-rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
     .badge-hold { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
+    /* Form controls */
+    .form-control {
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; width: 100%; }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+
+    .btn-outline { background: #ffffff; color: #334155; border-color: #cbd5e1; }
+    .btn-outline:hover { background: #f8fafc; border-color: #94a3b8; }
+
+    .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 8px; }
+
     @media (max-width: 768px) {
       .sidebar { width: 70px; }
       .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
       .main { margin-left: 70px; }
       .content { padding: 18px; }
+      .app-card { flex-direction: column; }
+      .app-actions { min-width: 0; width: 100%; }
     }
   </style>
 </head>
@@ -437,34 +460,30 @@
     <span>PlaceHub</span>
   </div>
   <nav class="nav">
-    <div class="nav-label">Main Navigation</div>
-    <a th:href="@{/admin/dashboard}">
+    <div class="nav-label">Company Menu</div>
+    <a th:href="@{/company/dashboard}">
       <span>📊</span>
       <span>Dashboard</span>
     </a>
-    <a th:href="@{/admin/students}">
-      <span>👨‍🎓</span>
-      <span>Students</span>
-    </a>
-    <a th:href="@{/admin/companies}">
-      <span>🏢</span>
-      <span>Companies</span>
-    </a>
-    <a th:href="@{/admin/jobs}" class="active">
+    <a th:href="@{/company/jobs}" class="active">
       <span>💼</span>
-      <span>Job Postings</span>
+      <span>My Job Posts</span>
     </a>
-    <a th:href="@{/admin/placements}">
-      <span>🏆</span>
-      <span>Placements</span>
+    <a th:href="@{/company/jobs/new}">
+      <span>➕</span>
+      <span>Post New Job</span>
+    </a>
+    <a th:href="@{/company/profile}">
+      <span>🏢</span>
+      <span>Company Profile</span>
     </a>
   </nav>
   <div class="sidebar-footer">
     <div class="admin-pill">
-      <div class="admin-avatar">AD</div>
+      <div class="admin-avatar" th:text="${company.companyName != null and !#strings.isEmpty(company.companyName) ? #strings.substring(company.companyName, 0, 1).toUpperCase() : 'C'}">C</div>
       <div class="admin-meta">
-        <div class="admin-name">Administrator</div>
-        <div class="admin-role">System Admin</div>
+        <div class="admin-name" th:text="${company.companyName}">Company</div>
+        <div class="admin-role" th:text="${company.industry != null ? company.industry : 'Company'}">Industry</div>
       </div>
     </div>
     <a th:href="@{/auth/logout}" class="btn-logout">
@@ -478,80 +497,87 @@
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <h1>Job Applicants</h1>
-      <p>Review who applied to this posting and their current application status.</p>
+      <h1>Job Applications</h1>
+      <p>Review candidates and manage their application status.</p>
     </div>
-    <div class="topbar-right">
-      <a th:href="@{/admin/jobs}" class="btn btn-outline">← Back to Job Postings</a>
-    </div>
+    <a th:href="@{/company/jobs}" class="btn btn-outline btn-sm">← Back to Jobs</a>
   </header>
 
   <main class="content">
 
+    <div th:if="${success}" class="alert-banner alert-success">
+      <span style="font-size: 18px;">✅</span>
+      <span th:text="${success}">Success</span>
+    </div>
+    <div th:if="${error}" class="alert-banner alert-error">
+      <span style="font-size: 18px;">❌</span>
+      <span th:text="${error}">Error</span>
+    </div>
+
     <!-- Job Summary -->
-    <div class="job-summary-card">
+    <div class="job-summary-card" th:if="${job != null}">
       <div class="job-summary-title" th:text="${job.title}">Job Title</div>
-      <div class="job-summary-sub" th:text="${(job.company != null ? job.company.companyName : '-') + ' • ' + (job.location != null ? job.location : '-')}">Company — Location</div>
+      <div class="job-summary-sub" th:text="${(job.location != null ? job.location : '-') + ' • ' + job.jobType.name().replace('_',' ')}">Location — Type</div>
       <div class="job-summary-stats">
         <div class="job-summary-stat" th:text="${job.packageLpa != null} ? |💰 ${job.packageLpa} LPA| : '💰 -'">Package</div>
-        <div class="job-summary-stat" th:text="'👥 ' + ${#lists.size(applicants)} + ' Applicant(s)'">Applicants</div>
+        <div class="job-summary-stat" th:text="'👥 ' + ${#lists.size(apps)} + ' Applicant(s)'">Applicants</div>
         <div class="job-summary-stat" th:text="${'📌 ' + job.status.name()}">Status</div>
       </div>
     </div>
 
-    <!-- Applicants Table -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">Applicants</span>
+        <span class="card-title">Applications (<span th:text="${#lists.size(apps)}">0</span>)</span>
       </div>
 
-      <div class="table-responsive">
-        <table>
-          <thead>
-          <tr>
-            <th>Candidate</th>
-            <th>Roll No</th>
-            <th>Department</th>
-            <th>CGPA / Backlogs</th>
-            <th>Applied On</th>
-            <th>Status</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="a : ${applicants}">
-            <td>
-              <div class="student-cell">
-                <div class="avatar-sm" th:text="${a.student != null and a.student.user != null and a.student.user.name != null and !#strings.isEmpty(a.student.user.name) ? #strings.substring(a.student.user.name, 0, 1) : 'S'}">S</div>
-                <div>
-                  <div class="student-name" th:text="${a.student != null and a.student.user != null ? a.student.user.name : 'Unknown'}">Student Name</div>
-                  <div class="student-sub" th:text="${a.student != null and a.student.user != null ? a.student.user.email : '-'}">email</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <span style="font-weight: 700; font-family: monospace;" th:text="${a.student != null and a.student.rollNumber != null ? a.student.rollNumber : '-'}">-</span>
-            </td>
-            <td th:text="${a.student != null and a.student.department != null ? a.student.department : '-'}">-</td>
-            <td>
-                  <span class="cgpa-pill"
-                        th:classappend="${a.student != null and a.student.cgpa != null and a.student.cgpa >= 8.0} ? 'cgpa-high' : (${a.student != null and a.student.cgpa != null and a.student.cgpa >= 6.0} ? 'cgpa-mid' : 'cgpa-low')"
-                        th:text="${a.student != null and a.student.cgpa != null} ? |${a.student.cgpa}| : '-'">-</span>
-              <span style="font-size: 12px; color: #64748b;" th:text="${a.student != null and a.student.backlogs != null} ? |&nbsp;/ ${a.student.backlogs} backlog(s)| : ''"></span>
-            </td>
-            <td style="font-size: 12px;" th:text="${a.appliedAt != null ? #temporals.format(a.appliedAt, 'dd MMM yyyy') : '-'}">-</td>
-            <td>
-                  <span class="badge"
-                        th:classappend="${a.status.name() == 'SELECTED'} ? 'badge-selected' : (${a.status.name() == 'REJECTED'} ? 'badge-rejected' : (${a.status.name() == 'SHORTLISTED'} ? 'badge-shortlisted' : (${a.status.name() == 'APPLIED'} ? 'badge-applied' : (${a.status.name() == 'ON_HOLD'} ? 'badge-hold' : 'badge-interview'))))"
-                        th:text="${a.status.name().replace('_',' ')}">Status</span>
-            </td>
-          </tr>
-          <tr th:if="${#lists.isEmpty(applicants)}">
-            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 48px;">
-              No students have applied to this job yet.
-            </td>
-          </tr>
-          </tbody>
-        </table>
+      <div th:if="${#lists.isEmpty(apps)}" class="empty-state">
+        No applications received yet for this job posting.
+      </div>
+
+      <div th:each="app : ${apps}" class="app-card">
+        <!-- Avatar -->
+        <div class="avatar-sm" th:text="${app.student != null and app.student.user != null and app.student.user.name != null and !#strings.isEmpty(app.student.user.name) ? #strings.substring(app.student.user.name, 0, 1).toUpperCase() : 'S'}">S</div>
+
+        <!-- Student Info -->
+        <div class="app-info">
+          <div class="app-name" th:text="${app.student != null and app.student.user != null ? app.student.user.name : 'Unknown'}">Name</div>
+          <div class="app-email" th:text="${app.student != null and app.student.user != null ? app.student.user.email : '-'}">email</div>
+          <div class="app-meta">
+            <span>🎫 <span th:text="${app.student != null and app.student.rollNumber != null ? app.student.rollNumber : '-'}">-</span></span>
+            <span>🏛 <span th:text="${app.student != null and app.student.department != null ? app.student.department : '-'}">-</span></span>
+            <span>⭐ CGPA: <strong th:text="${app.student != null and app.student.cgpa != null ? app.student.cgpa : '-'}">-</strong></span>
+            <span>⚠ Backlogs: <span th:text="${app.student != null and app.student.backlogs != null ? app.student.backlogs : 0}">0</span></span>
+          </div>
+          <div th:if="${app.student != null and !#lists.isEmpty(app.student.skills)}" style="margin-top: 6px;">
+            <span th:each="skill : ${app.student.skills}" class="skill-tag" th:text="${skill}">Skill</span>
+          </div>
+          <div th:if="${app.student != null and app.student.resumePath != null}" style="margin-top: 10px;">
+            <a th:href="${app.student.resumePath}" target="_blank" class="btn btn-outline btn-sm">📄 Resume</a>
+          </div>
+          <div class="app-date">
+            Applied: <span th:text="${app.appliedAt != null ? #temporals.format(app.appliedAt,'dd MMM yyyy') : '-'}">Date</span>
+          </div>
+        </div>
+
+        <!-- Status Update -->
+        <div class="app-actions">
+            <span class="badge"
+                  th:classappend="${app.status.name() == 'SELECTED'} ? 'badge-selected' : (${app.status.name() == 'REJECTED'} ? 'badge-rejected' : (${app.status.name() == 'APPLIED'} ? 'badge-applied' : (${app.status.name() == 'SHORTLISTED'} ? 'badge-shortlisted' : (${app.status.name() == 'ON_HOLD'} ? 'badge-hold' : 'badge-interview'))))"
+                  th:text="${app.status.name().replace('_',' ')}">Status</span>
+
+          <form th:action="@{'/company/applications/' + ${app.id} + '/status'}" method="post">
+            <input type="hidden" name="jobId" th:value="${jobId}">
+            <select name="status" class="form-control" style="margin-bottom: 8px;">
+              <option th:each="s : ${T(com.placement.portal.model.Application.ApplicationStatus).values()}"
+                      th:value="${s.name()}"
+                      th:text="${s.name().replace('_',' ')}"
+                      th:selected="${s == app.status}">Status</option>
+            </select>
+            <input type="text" name="remarks" class="form-control" placeholder="Remarks (optional)"
+                   th:value="${app.remarks}" style="margin-bottom: 8px;">
+            <button type="submit" class="btn btn-primary">Update Status</button>
+          </form>
+        </div>
       </div>
     </div>
 

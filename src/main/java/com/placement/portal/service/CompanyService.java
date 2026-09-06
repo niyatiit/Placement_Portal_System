@@ -151,6 +151,33 @@ public class CompanyService {
         return jobRepo.findByCompany(c);
     }
 
+    // Verify a job posting actually belongs to this company before allowing access
+    public JobPosting getOwnedJob(Company c, Long jobId) {
+        JobPosting j = jobRepo.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+        if (j.getCompany() == null || !j.getCompany().getId().equals(c.getId())) {
+            throw new RuntimeException("You do not have access to this job posting");
+        }
+        return j;
+    }
+
+    // Company self-service profile update (name, industry, location, contact, phone, website, description)
+    public Company updateOwnProfile(Long id, String companyName, String industry, String location,
+                                    String contactPerson, String phone, String website, String description) {
+        Company c = companyRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+        if (companyName != null && !companyName.trim().isEmpty()) {
+            c.setCompanyName(companyName.trim());
+        }
+        c.setIndustry(industry);
+        c.setLocation(location);
+        c.setContactPerson(contactPerson);
+        c.setPhone(phone);
+        c.setWebsite(website);
+        c.setDescription(description);
+        return companyRepo.save(c);
+    }
+
     public List<Application> getAppsForJob(Long jobId) {
         return jobRepo.findById(jobId)
                 .map(appRepo::findByJobPosting)
