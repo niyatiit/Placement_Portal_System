@@ -1,14 +1,19 @@
 package com.placement.portal.controller;
 
+import com.placement.portal.model.Application;
+import com.placement.portal.model.JobPosting;
 import com.placement.portal.model.Student;
+import com.placement.portal.repository.ApplicationRepository;
 import com.placement.portal.repository.JobPostingRepository;
 import com.placement.portal.service.CompanyService;
 import com.placement.portal.service.StudentService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -18,12 +23,14 @@ public class AdminController {
     private final StudentService studentService;
     private final CompanyService companyService;
     private final JobPostingRepository jobRepo;
+    private final ApplicationRepository appRepo;
 
     public AdminController(StudentService studentService, CompanyService companyService,
-                           JobPostingRepository jobRepo) {
+                           JobPostingRepository jobRepo, ApplicationRepository appRepo) {
         this.studentService = studentService;
         this.companyService = companyService;
         this.jobRepo = jobRepo;
+        this.appRepo = appRepo;
     }
 
     @GetMapping("/dashboard")
@@ -170,6 +177,70 @@ public class AdminController {
     public String jobs(Model model) {
         model.addAttribute("jobs", jobRepo.findAll());
         return "admin/jobs";
+    }
+
+    @PostMapping("/jobs/{id}/update")
+    public String updateJob(@PathVariable Long id,
+                            @RequestParam String title,
+                            @RequestParam(required = false) String description,
+                            @RequestParam Double packageLpa,
+                            @RequestParam(required = false) Double minCgpa,
+                            @RequestParam(required = false) Integer maxBacklogs,
+                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate applicationDeadline,
+                            RedirectAttributes ra) {
+        try {
+            JobPosting j = jobRepo.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+            j.setTitle(title);
+            j.setDescription(description);
+            j.setPackageLpa(packageLpa);
+            j.setMinCgpa(minCgpa);
+            j.setMaxBacklogs(maxBacklogs);
+            j.setApplicationDeadline(applicationDeadline);
+            jobRepo.save(j);
+            ra.addFlashAttribute("success", "Job posting updated successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update job: " + e.getMessage());
+        }
+        return "redirect:/admin/jobs";
+    }
+
+    @PostMapping("/jobs/{id}/status")
+    public String toggleJobStatus(@PathVariable Long id,
+                                  @RequestParam JobPosting.PostingStatus status,
+                                  RedirectAttributes ra) {
+        try {
+            JobPosting j = jobRepo.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+            j.setStatus(status);
+            jobRepo.save(j);
+            ra.addFlashAttribute("success", "Job posting marked as " + status.name() + ".");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update job status: " + e.getMessage());
+        }
+        return "redirect:/admin/jobs";
+    }
+
+    @PostMapping("/jobs/{id}/delete")
+    public String deleteJob(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            JobPosting j = jobRepo.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+            List<Application> apps = appRepo.findByJobPosting(j);
+            if (!apps.isEmpty()) {
+                appRepo.deleteAll(apps);
+            }
+            jobRepo.delete(j);
+            ra.addFlashAttribute("success", "Job posting deleted successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to delete job: " + e.getMessage());
+        }
+        return "redirect:/admin/jobs";
+    }
+
+    @GetMapping("/jobs/{id}/applicants")
+    public String viewApplicants(@PathVariable Long id, Model model) {
+        JobPosting j = jobRepo.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+        model.addAttribute("job", j);
+        model.addAttribute("applicants", appRepo.findByJobPosting(j));
+        return "admin/applicants";
     }
 
     @GetMapping("/placements")

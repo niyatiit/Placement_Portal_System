@@ -1,88 +1,938 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>Jobs - PlaceHub Admin</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
-.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
-.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
-.nav{flex:1;padding:12px 8px}
-.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
-.nav a:hover,.nav a.active{background:#334155;color:#fff}
-.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
-.sidebar-foot{padding:12px;border-top:1px solid #334155}
-.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
-.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
-.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
-.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:10}
-.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
-.content{padding:24px;flex:1}
-.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
-.card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:14px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#f8fafc;padding:9px 12px;text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0}
-td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151;vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafafa}
-.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.b-green{background:#dcfce7;color:#166534}
-.b-gray{background:#f1f5f9;color:#475569}
-.b-blue{background:#dbeafe;color:#1e40af}
-.pkg{display:inline-block;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Postings - PlaceHub Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --danger-light: #fef2f2;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --sidebar-text: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      border-right: 1px solid #1e293b;
+    }
+
+    .brand {
+      padding: 24px 20px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand span {
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav {
+      flex: 1;
+      padding: 20px 14px;
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #475569;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .nav a:hover {
+      background: var(--sidebar-hover);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .nav a.active {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid #1e293b;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .admin-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: #1e293b;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .admin-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .admin-meta {
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .admin-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .admin-role {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+
+    /* Main Area */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+    }
+
+    .topbar-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .content {
+      padding: 32px;
+      flex: 1;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .alert-success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+
+    .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .btn-action-edit {
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+
+    .btn-action-edit:hover {
+      background: #4338ca;
+      color: #ffffff;
+    }
+
+    .btn-action-status {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .btn-action-status:hover {
+      background: #059669;
+      color: #ffffff;
+    }
+
+    .btn-action-status.is-closed {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+
+    .btn-action-status.is-closed:hover {
+      background: #d97706;
+      color: #ffffff;
+    }
+
+    .btn-action-view {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .btn-action-view:hover {
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+
+    .btn-action-delete {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-action-delete:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    /* Table */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    thead th {
+      background: #f8fafc;
+      padding: 12px 16px;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Job cell */
+    .job-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .job-title {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .job-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pkg-pill {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .badge-active {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-closed {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+
+    .badge-draft {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fef08a;
+    }
+
+    .badge-type {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 620px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-main);
+      background: #e2e8f0;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .col-span-2 {
+      grid-column: span 2;
+    }
+
+    .search-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-control {
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 70px; }
+      .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
+      .main { margin-left: 70px; }
+      .content { padding: 18px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .col-span-2 { grid-column: span 1; }
+    }
+  </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="brand">🎓 PlaceHub</div>
-  <div class="nav">
-    <div class="nav-section">Admin Panel</div>
-    <a href="/admin/dashboard">📊 Dashboard</a>
-    <a href="/admin/students">👨‍🎓 Students</a>
-    <a href="/admin/companies">🏢 Companies</a>
-    <a href="/admin/jobs" class="active">💼 Job Postings</a>
-    <a href="/admin/placements">🏆 Placements</a>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🎓</div>
+    <span>PlaceHub</span>
   </div>
-  <div class="sidebar-foot">
-    <div class="user-info"><div class="user-name">Admin</div><div>Administrator</div></div>
-    <a href="/auth/logout" class="logout">Logout</a>
+  <nav class="nav">
+    <div class="nav-label">Main Navigation</div>
+    <a th:href="@{/admin/dashboard}">
+      <span>📊</span>
+      <span>Dashboard</span>
+    </a>
+    <a th:href="@{/admin/students}">
+      <span>👨‍🎓</span>
+      <span>Students</span>
+    </a>
+    <a th:href="@{/admin/companies}">
+      <span>🏢</span>
+      <span>Companies</span>
+    </a>
+    <a th:href="@{/admin/jobs}" class="active">
+      <span>💼</span>
+      <span>Job Postings</span>
+    </a>
+    <a th:href="@{/admin/placements}">
+      <span>🏆</span>
+      <span>Placements</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-pill">
+      <div class="admin-avatar">AD</div>
+      <div class="admin-meta">
+        <div class="admin-name">Administrator</div>
+        <div class="admin-role">System Admin</div>
+      </div>
+    </div>
+    <a th:href="@{/auth/logout}" class="btn-logout">
+      <span>🚪</span>
+      <span>Sign Out</span>
+    </a>
   </div>
-</div>
+</aside>
+
+<!-- Main Content -->
 <div class="main">
-  <div class="topbar"><h1>All Job Postings</h1></div>
-  <div class="content">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Job Postings Management</h1>
+      <p>Edit job details or remove postings.</p>
+    </div>
+    <div class="topbar-right">
+        <span style="font-size: 13px; font-weight: 600; color: #475569;">
+          Total: <strong style="color: var(--primary);" th:text="${#lists.size(jobs)}">0</strong> jobs
+        </span>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- Success Alert -->
+    <div th:if="${success}" class="alert-banner alert-success">
+      <span style="font-size: 18px;">✅</span>
+      <span th:text="${success}">Action completed successfully.</span>
+    </div>
+
+    <!-- Error Alert -->
+    <div th:if="${error}" class="alert-banner alert-error">
+      <span style="font-size: 18px;">❌</span>
+      <span th:text="${error}">An error occurred.</span>
+    </div>
+
+    <!-- Jobs Table -->
     <div class="card">
-      <div class="card-title">All Jobs (<span th:text="${#lists.size(jobs)}">0</span>)</div>
-      <table>
-        <thead>
-          <tr><th>Title</th><th>Company</th><th>Type</th><th>Package</th><th>Min CGPA</th><th>Max Backlogs</th><th>Deadline</th><th>Status</th></tr>
-        </thead>
-        <tbody>
+      <div class="card-header">
+        <span class="card-title">All Job Postings</span>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Company</th>
+            <th>Type</th>
+            <th>Package</th>
+            <th>Eligibility</th>
+            <th>Deadline</th>
+            <th>Status</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
           <tr th:each="j : ${jobs}">
             <td>
-              <div style="font-weight:600" th:text="${j.title}">Title</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${j.location}">Location</div>
+              <div class="job-cell">
+                <div class="avatar-sm" th:text="${j.title != null and !#strings.isEmpty(j.title) ? #strings.substring(j.title, 0, 1) : 'J'}">J</div>
+                <div>
+                  <div class="job-title" th:text="${j.title}">Title</div>
+                  <div class="job-sub" th:text="${j.location != null ? j.location : '-'}">Location</div>
+                </div>
+              </div>
             </td>
-            <td th:text="${j.company.companyName}">Company</td>
-            <td><span class="badge b-blue" th:text="${j.jobType.name().replace('_',' ')}">Type</span></td>
-            <td><span class="pkg" th:text="${j.packageLpa + ' LPA'}">-</span></td>
-            <td th:text="${j.minCgpa}">-</td>
-            <td th:text="${j.maxBacklogs}">-</td>
-            <td style="font-size:12px" th:text="${j.applicationDeadline}">-</td>
             <td>
-              <span class="badge"
-                th:classappend="${j.status.name() == 'ACTIVE'} ? 'b-green' : 'b-gray'"
-                th:text="${j.status.name()}">-</span>
+              <div style="font-weight: 600;" th:text="${j.company != null ? j.company.companyName : '-'}">Company</div>
+            </td>
+            <td>
+              <span class="badge badge-type" th:text="${j.jobType != null ? j.jobType.name().replace('_',' ') : '-'}">Type</span>
+            </td>
+            <td>
+              <span class="pkg-pill" th:text="${j.packageLpa != null} ? |${j.packageLpa} LPA| : '-'">-</span>
+            </td>
+            <td>
+              <div style="font-size: 12px;">CGPA ≥ <strong th:text="${j.minCgpa != null ? j.minCgpa : '-'}">-</strong></div>
+              <div style="font-size: 12px; color: #64748b;">Backlogs ≤ <strong th:text="${j.maxBacklogs != null ? j.maxBacklogs : '-'}">-</strong></div>
+            </td>
+            <td style="font-size: 12px;" th:text="${j.applicationDeadline != null ? j.applicationDeadline : '-'}">-</td>
+            <td>
+                  <span class="badge"
+                        th:classappend="${j.status.name() == 'ACTIVE'} ? 'badge-active' : (${j.status.name() == 'CLOSED'} ? 'badge-closed' : 'badge-draft')"
+                        th:text="${j.status.name()}">-</span>
+            </td>
+            <td style="text-align: right;">
+              <div class="action-group" style="justify-content: flex-end;">
+                <button type="button" class="btn btn-sm btn-action-edit"
+                        title="Edit Job Posting"
+                        th:data-id="${j.id}"
+                        th:data-title="${j.title}"
+                        th:data-package="${j.packageLpa != null ? j.packageLpa : ''}"
+                        th:data-cgpa="${j.minCgpa != null ? j.minCgpa : ''}"
+                        th:data-backlogs="${j.maxBacklogs != null ? j.maxBacklogs : ''}"
+                        th:data-deadline="${j.applicationDeadline != null ? j.applicationDeadline : ''}"
+                        th:data-description="${j.description != null ? j.description : ''}"
+                        onclick="openEditModal(this)">
+                  ✏️ Edit
+                </button>
+
+                <button type="button" class="btn btn-sm btn-action-delete"
+                        title="Delete Job Posting"
+                        th:data-id="${j.id}"
+                        th:data-title="${j.title}"
+                        onclick="openDeleteModal(this.getAttribute('data-id'), this.getAttribute('data-title'))">
+                  🗑️ Delete
+                </button>
+              </div>
             </td>
           </tr>
           <tr th:if="${#lists.isEmpty(jobs)}">
-            <td colspan="8" style="text-align:center;color:#94a3b8;padding:32px">No jobs posted yet.</td>
+            <td colspan="8" style="text-align: center; color: #94a3b8; padding: 48px;">
+              No jobs posted yet.
+            </td>
           </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
+
+  </main>
+</div>
+
+<!-- MODAL 1: Edit Job Modal -->
+<div id="editJobModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit Job Posting</div>
+      <button type="button" class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <form id="editJobForm" method="post">
+      <div class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-group col-span-2">
+            <label class="search-label" style="margin-bottom: 4px;">Job Title *</label>
+            <input type="text" id="editTitle" name="title" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="search-label" style="margin-bottom: 4px;">Package (LPA) *</label>
+            <input type="number" step="0.1" min="0" id="editPackage" name="packageLpa" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="search-label" style="margin-bottom: 4px;">Application Deadline</label>
+            <input type="date" id="editDeadline" name="applicationDeadline" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="search-label" style="margin-bottom: 4px;">Min CGPA</label>
+            <input type="number" step="0.01" min="0" max="10" id="editCgpa" name="minCgpa" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="search-label" style="margin-bottom: 4px;">Max Backlogs</label>
+            <input type="number" min="0" id="editBacklogs" name="maxBacklogs" class="form-control">
+          </div>
+
+          <div class="form-group col-span-2">
+            <label class="search-label" style="margin-bottom: 4px;">Job Description</label>
+            <textarea id="editDescription" name="description" class="form-control" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
   </div>
 </div>
+
+<!-- MODAL 2: Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-card" style="max-width: 460px;">
+    <div class="modal-header" style="background: #fef2f2;">
+      <div class="modal-title" style="color: #991b1b;">🗑️ Delete Job Posting</div>
+      <button type="button" class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <form id="deleteForm" method="post">
+      <div class="modal-body">
+        <p style="font-size: 14px; color: #334155; line-height: 1.5;">
+          Are you sure you want to delete <strong id="deleteTargetTitle" style="color: #0f172a;">this job posting</strong>?
+        </p>
+        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 12px; color: #be123c;">
+          ⚠️ This will permanently remove the job posting and every application submitted to it. This action cannot be reversed.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+        <button type="submit" class="btn" style="background: #ef4444; color: #fff;">Confirm Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- JavaScript: Modals -->
+<script>
+  // Edit Modal
+  function openEditModal(btn) {
+    const id = btn.getAttribute('data-id');
+    const form = document.getElementById('editJobForm');
+    form.action = '/admin/jobs/' + id + '/update';
+
+    document.getElementById('editTitle').value = btn.getAttribute('data-title') || '';
+    document.getElementById('editPackage').value = btn.getAttribute('data-package') || '';
+    document.getElementById('editCgpa').value = btn.getAttribute('data-cgpa') || '';
+    document.getElementById('editBacklogs').value = btn.getAttribute('data-backlogs') || '';
+    document.getElementById('editDeadline').value = btn.getAttribute('data-deadline') || '';
+    document.getElementById('editDescription').value = btn.getAttribute('data-description') || '';
+
+    document.getElementById('editJobModal').classList.add('active');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editJobModal').classList.remove('active');
+  }
+
+  // Delete Modal
+  function openDeleteModal(id, title) {
+    const form = document.getElementById('deleteForm');
+    form.action = '/admin/jobs/' + id + '/delete';
+    document.getElementById('deleteTargetTitle').innerText = title || 'this job posting';
+    document.getElementById('deleteModal').classList.add('active');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+  }
+
+  // Close on Escape or click outside
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeEditModal();
+      closeDeleteModal();
+    }
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+      }
+    });
+  });
+</script>
 </body>
 </html>
