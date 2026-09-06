@@ -62,19 +62,19 @@ public class AdminController {
 
     @PostMapping("/students/{id}/update")
     public String updateStudent(@PathVariable Long id,
-                               @RequestParam String name,
-                               @RequestParam(required = false) String phone,
-                               @RequestParam(required = false) String department,
-                               @RequestParam(required = false) String batch,
-                               @RequestParam(required = false) String rollNumber,
-                               @RequestParam(required = false) Double cgpa,
-                               @RequestParam(required = false) Integer backlogs,
-                               @RequestParam(required = false) Double tenthPercentage,
-                               @RequestParam(required = false) Double twelfthPercentage,
-                               @RequestParam(required = false) Student.PlacementStatus placementStatus,
-                               @RequestParam(required = false) String placedCompany,
-                               @RequestParam(required = false) Double placementPackage,
-                               RedirectAttributes ra) {
+                                @RequestParam String name,
+                                @RequestParam(required = false) String phone,
+                                @RequestParam(required = false) String department,
+                                @RequestParam(required = false) String batch,
+                                @RequestParam(required = false) String rollNumber,
+                                @RequestParam(required = false) Double cgpa,
+                                @RequestParam(required = false) Integer backlogs,
+                                @RequestParam(required = false) Double tenthPercentage,
+                                @RequestParam(required = false) Double twelfthPercentage,
+                                @RequestParam(required = false) Student.PlacementStatus placementStatus,
+                                @RequestParam(required = false) String placedCompany,
+                                @RequestParam(required = false) Double placementPackage,
+                                RedirectAttributes ra) {
         try {
             studentService.updateStudent(id, name, phone, department, batch, rollNumber,
                     cgpa, backlogs, tenthPercentage, twelfthPercentage, placementStatus, placedCompany, placementPackage);
@@ -114,7 +114,6 @@ public class AdminController {
     @GetMapping("/companies")
     public String companies(Model model) {
         model.addAttribute("companies", companyService.findAll());
-        model.addAttribute("pending", companyService.findPending());
         return "admin/companies";
     }
 
@@ -122,6 +121,48 @@ public class AdminController {
     public String verify(@PathVariable Long id, @RequestParam boolean approved, RedirectAttributes ra) {
         companyService.verify(id, approved);
         ra.addFlashAttribute("success", approved ? "Company approved!" : "Company rejected.");
+        return "redirect:/admin/companies";
+    }
+
+    @PostMapping("/companies/{id}/update")
+    public String updateCompany(@PathVariable Long id,
+                                @RequestParam String companyName,
+                                @RequestParam(required = false) String industry,
+                                @RequestParam(required = false) String location,
+                                @RequestParam(required = false) String contactPerson,
+                                @RequestParam(required = false) String website,
+                                @RequestParam(required = false) String phone,
+                                RedirectAttributes ra) {
+        try {
+            companyService.updateCompany(id, companyName, industry, location, contactPerson, website, phone);
+            ra.addFlashAttribute("success", "Company details updated successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update company: " + e.getMessage());
+        }
+        return "redirect:/admin/companies";
+    }
+
+    @PostMapping("/companies/{id}/delete")
+    public String deleteCompany(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            companyService.deleteCompany(id);
+            ra.addFlashAttribute("success", "Company and all associated job postings deleted successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to delete company: " + e.getMessage());
+        }
+        return "redirect:/admin/companies";
+    }
+
+    @PostMapping("/companies/{id}/status")
+    public String updateCompanyStatus(@PathVariable Long id,
+                                      @RequestParam com.placement.portal.model.Company.VerificationStatus status,
+                                      RedirectAttributes ra) {
+        try {
+            companyService.updateVerificationStatus(id, status);
+            ra.addFlashAttribute("success", "Company status changed to " + status.name() + ".");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update status: " + e.getMessage());
+        }
         return "redirect:/admin/companies";
     }
 

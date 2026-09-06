@@ -1,129 +1,1057 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>Companies - PlaceHub Admin</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
-.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
-.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
-.nav{flex:1;padding:12px 8px}
-.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
-.nav a:hover,.nav a.active{background:#334155;color:#fff}
-.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
-.sidebar-foot{padding:12px;border-top:1px solid #334155}
-.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
-.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
-.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
-.logout:hover{background:#dc2626}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
-.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:10}
-.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
-.content{padding:24px;flex:1}
-.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
-.card-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:14px}
-.pending-item{display:flex;align-items:center;justify-content:space-between;padding:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;margin-bottom:10px}
-.pending-name{font-weight:700;color:#1e293b}
-.pending-sub{font-size:12px;color:#64748b;margin-top:2px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#f8fafc;padding:9px 12px;text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0}
-td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151;vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafafa}
-.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.b-green{background:#dcfce7;color:#166534}
-.b-yellow{background:#fef9c3;color:#713f12}
-.b-red{background:#fee2e2;color:#991b1b}
-.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none;margin-right:4px}
-.btn-success{background:#16a34a;color:#fff}
-.btn-success:hover{background:#15803d}
-.btn-danger{background:#dc2626;color:#fff}
-.btn-danger:hover{background:#b91c1c}
-.btn-sm{padding:5px 10px;font-size:11px}
-.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
-.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Management - PlaceHub Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --danger-light: #fef2f2;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-text: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            border-right: 1px solid #1e293b;
+        }
+
+        .brand {
+            padding: 24px 20px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .brand span {
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            flex: 1;
+            padding: 20px 14px;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #475569;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .nav a:hover {
+            background: var(--sidebar-hover);
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+
+        .nav a.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid #1e293b;
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .admin-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #1e293b;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .admin-meta {
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .admin-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f1f5f9;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .admin-role {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #ef4444;
+            color: #fff;
+            border-color: #ef4444;
+        }
+
+        /* Main Area */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: blur(8px);
+        }
+
+        .topbar-left h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            color: var(--text-main);
+        }
+
+        .topbar-left p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .content {
+            padding: 32px;
+            flex: 1;
+        }
+
+        /* Alerts */
+        .alert-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Pending list */
+        .pending-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .pending-item:last-child { margin-bottom: 0; }
+
+        .pending-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .pending-sub {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            color: #334155;
+            border-color: #cbd5e1;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        .btn-success:hover { background: #15803d; }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .btn-danger:hover { background: #b91c1c; }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .btn-action-edit {
+            background: #eef2ff;
+            color: #4338ca;
+            border: 1px solid #c7d2fe;
+        }
+
+        .btn-action-edit:hover {
+            background: #4338ca;
+            color: #ffffff;
+        }
+
+        .btn-action-status {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .btn-action-status:hover {
+            background: #059669;
+            color: #ffffff;
+        }
+
+        .btn-action-delete {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .btn-action-delete:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        thead th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Company cell */
+        .company-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .company-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge-pending {
+            background: #fef9c3;
+            color: #854d0e;
+            border: 1px solid #fef08a;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .badge-suspended {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+            background: #e2e8f0;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        .search-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-control {
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-main);
+            background: #ffffff;
+            outline: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        }
+
+        .status-option-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.15s;
+        }
+
+        .status-option:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        .status-option input {
+            accent-color: var(--primary);
+        }
+
+        .status-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 70px; }
+            .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
+            .main { margin-left: 70px; }
+            .content { padding: 18px; }
+            .form-grid-2 { grid-template-columns: 1fr; }
+            .col-span-2 { grid-column: span 1; }
+            .status-option-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="brand">🎓 PlaceHub</div>
-  <div class="nav">
-    <div class="nav-section">Admin Panel</div>
-    <a href="/admin/dashboard">📊 Dashboard</a>
-    <a href="/admin/students">👨‍🎓 Students</a>
-    <a href="/admin/companies" class="active">🏢 Companies</a>
-    <a href="/admin/jobs">💼 Job Postings</a>
-    <a href="/admin/placements">🏆 Placements</a>
-  </div>
-  <div class="sidebar-foot">
-    <div class="user-info"><div class="user-name">Admin</div><div>Administrator</div></div>
-    <a href="/auth/logout" class="logout">Logout</a>
-  </div>
-</div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-icon">🎓</div>
+        <span>PlaceHub</span>
+    </div>
+    <nav class="nav">
+        <div class="nav-label">Main Navigation</div>
+        <a th:href="@{/admin/dashboard}">
+            <span>📊</span>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/admin/students}">
+            <span>👨‍🎓</span>
+            <span>Students</span>
+        </a>
+        <a th:href="@{/admin/companies}" class="active">
+            <span>🏢</span>
+            <span>Companies</span>
+        </a>
+        <a th:href="@{/admin/jobs}">
+            <span>💼</span>
+            <span>Job Postings</span>
+        </a>
+        <a th:href="@{/admin/placements}">
+            <span>🏆</span>
+            <span>Placements</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="admin-pill">
+            <div class="admin-avatar">AD</div>
+            <div class="admin-meta">
+                <div class="admin-name">Administrator</div>
+                <div class="admin-role">System Admin</div>
+            </div>
+        </div>
+        <a th:href="@{/auth/logout}" class="btn-logout">
+            <span>🚪</span>
+            <span>Sign Out</span>
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
 <div class="main">
-  <div class="topbar"><h1>Company Management</h1></div>
-  <div class="content">
-    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
-
-    <!-- Pending -->
-    <div th:if="${!#lists.isEmpty(pending)}" class="card">
-      <div class="card-title" style="color:#c2410c">⏳ Pending Verification (<span th:text="${#lists.size(pending)}">0</span>)</div>
-      <div th:each="c : ${pending}" class="pending-item">
-        <div>
-          <div class="pending-name" th:text="${c.companyName}">Company</div>
-          <div class="pending-sub" th:text="${c.industry + ' — ' + (c.location != null ? c.location : 'N/A')}">Industry</div>
-          <div class="pending-sub" th:text="${c.user.email}">email</div>
+    <header class="topbar">
+        <div class="topbar-left">
+            <h1>Company Management</h1>
+            <p>Review, edit, approve, revoke, suspend, or remove company accounts.</p>
         </div>
-        <div>
-          <form th:action="@{'/admin/companies/' + ${c.id} + '/verify'}" method="post" style="display:inline">
-            <input type="hidden" name="approved" value="true">
-            <button type="submit" class="btn btn-success btn-sm">✓ Approve</button>
-          </form>
-          <form th:action="@{'/admin/companies/' + ${c.id} + '/verify'}" method="post" style="display:inline">
-            <input type="hidden" name="approved" value="false">
-            <button type="submit" class="btn btn-danger btn-sm">✗ Reject</button>
-          </form>
+        <div class="topbar-right">
+        <span style="font-size: 13px; font-weight: 600; color: #475569;">
+          Total: <strong style="color: var(--primary);" th:text="${#lists.size(companies)}">0</strong> companies
+        </span>
         </div>
-      </div>
-    </div>
+    </header>
 
-    <!-- All companies table -->
-    <div class="card">
-      <div class="card-title">All Companies (<span th:text="${#lists.size(companies)}">0</span>)</div>
-      <table>
-        <thead>
-          <tr><th>Company</th><th>Industry</th><th>Location</th><th>Contact</th><th>Website</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          <tr th:each="c : ${companies}">
-            <td>
-              <div style="font-weight:700" th:text="${c.companyName}">Name</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${c.user.email}">email</div>
-            </td>
-            <td th:text="${c.industry != null ? c.industry : '-'}">-</td>
-            <td th:text="${c.location != null ? c.location : '-'}">-</td>
-            <td>
-              <div th:text="${c.contactPerson != null ? c.contactPerson : '-'}">-</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${c.phone != null ? c.phone : ''}">-</div>
-            </td>
-            <td>
-              <a th:if="${c.website != null}" th:href="${c.website}" target="_blank"
-                 style="color:#2563eb;font-size:12px">Visit ↗</a>
-              <span th:if="${c.website == null}" style="color:#94a3b8">-</span>
-            </td>
-            <td>
-              <span class="badge"
-                th:classappend="${c.verificationStatus.name() == 'VERIFIED'} ? 'b-green' : (${c.verificationStatus.name() == 'PENDING'} ? 'b-yellow' : 'b-red')"
-                th:text="${c.verificationStatus.name()}">-</span>
-            </td>
-          </tr>
-          <tr th:if="${#lists.isEmpty(companies)}">
-            <td colspan="6" style="text-align:center;color:#94a3b8;padding:32px">No companies yet.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <main class="content">
+
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert-banner alert-success">
+            <span style="font-size: 18px;">✅</span>
+            <span th:text="${success}">Action completed successfully.</span>
+        </div>
+
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert-banner alert-error">
+            <span style="font-size: 18px;">❌</span>
+            <span th:text="${error}">An error occurred.</span>
+        </div>
+
+        <!-- Companies Table -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">All Companies</span>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Industry</th>
+                        <th>Location</th>
+                        <th>Contact</th>
+                        <th>Website</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${companies}">
+                        <td>
+                            <div class="company-cell">
+                                <div class="avatar-sm" th:text="${c.companyName != null and !#strings.isEmpty(c.companyName) ? #strings.substring(c.companyName, 0, 1) : 'C'}">C</div>
+                                <div>
+                                    <div class="company-name" th:text="${c.companyName}">Name</div>
+                                    <div class="company-sub" th:text="${c.user.email}">email</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:text="${c.industry != null ? c.industry : '-'}">-</td>
+                        <td th:text="${c.location != null ? c.location : '-'}">-</td>
+                        <td>
+                            <div th:text="${c.contactPerson != null ? c.contactPerson : '-'}">-</div>
+                            <div class="company-sub" th:text="${c.phone != null ? c.phone : ''}"></div>
+                        </td>
+                        <td>
+                            <a th:if="${c.website != null and !#strings.isEmpty(c.website)}" th:href="${c.website}" target="_blank" style="color:#4f46e5;font-size:12px;font-weight:600;">Visit ↗</a>
+                            <span th:if="${c.website == null or #strings.isEmpty(c.website)}" style="color:#94a3b8;">-</span>
+                        </td>
+                        <td>
+                  <span class="badge"
+                        th:classappend="${c.verificationStatus.name() == 'VERIFIED'} ? 'badge-verified' : (${c.verificationStatus.name() == 'PENDING'} ? 'badge-pending' : (${c.verificationStatus.name() == 'SUSPENDED'} ? 'badge-suspended' : 'badge-rejected'))"
+                        th:text="${c.verificationStatus.name()}">-</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="action-group" style="justify-content: flex-end;">
+                                <button type="button" class="btn btn-sm btn-action-status"
+                                        title="Change Status"
+                                        th:data-id="${c.id}"
+                                        th:data-name="${c.companyName}"
+                                        th:data-status="${c.verificationStatus.name()}"
+                                        onclick="openStatusModal(this)">
+                                    ⚡ Status
+                                </button>
+
+                                <button type="button" class="btn btn-sm btn-action-edit"
+                                        title="Edit Company"
+                                        th:data-id="${c.id}"
+                                        th:data-name="${c.companyName}"
+                                        th:data-industry="${c.industry != null ? c.industry : ''}"
+                                        th:data-location="${c.location != null ? c.location : ''}"
+                                        th:data-contact="${c.contactPerson != null ? c.contactPerson : ''}"
+                                        th:data-website="${c.website != null ? c.website : ''}"
+                                        th:data-phone="${c.phone != null ? c.phone : ''}"
+                                        onclick="openEditModal(this)">
+                                    ✏️ Edit
+                                </button>
+
+                                <button type="button" class="btn btn-sm btn-action-delete"
+                                        title="Delete Company"
+                                        th:data-id="${c.id}"
+                                        th:data-name="${c.companyName}"
+                                        onclick="openDeleteModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(companies)}">
+                        <td colspan="7" style="text-align: center; color: #94a3b8; padding: 48px;">
+                            No companies found in the database.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
 </div>
+
+<!-- MODAL 1: Edit Company Modal -->
+<div id="editCompanyModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title">✏️ Edit Company</div>
+            <button type="button" class="modal-close" onclick="closeEditModal()">✕</button>
+        </div>
+        <form id="editCompanyForm" method="post">
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <div class="form-group col-span-2">
+                        <label class="search-label" style="margin-bottom: 4px;">Company Name *</label>
+                        <input type="text" id="editCompanyName" name="companyName" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="search-label" style="margin-bottom: 4px;">Industry</label>
+                        <input type="text" id="editIndustry" name="industry" class="form-control" placeholder="e.g. Information Technology">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="search-label" style="margin-bottom: 4px;">Location</label>
+                        <input type="text" id="editLocation" name="location" class="form-control" placeholder="e.g. Bangalore, India">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="search-label" style="margin-bottom: 4px;">Contact Person</label>
+                        <input type="text" id="editContact" name="contactPerson" class="form-control" placeholder="e.g. HR Manager Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="search-label" style="margin-bottom: 4px;">Phone</label>
+                        <input type="text" id="editPhone" name="phone" class="form-control" placeholder="e.g. +91 98765 43210">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label class="search-label" style="margin-bottom: 4px;">Website</label>
+                        <input type="text" id="editWebsite" name="website" class="form-control" placeholder="e.g. https://company.com">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL 2: Status Modal (Approve / Revoke / Suspend) -->
+<div id="statusModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+            <div class="modal-title">⚡ Change Company Status</div>
+            <button type="button" class="modal-close" onclick="closeStatusModal()">✕</button>
+        </div>
+        <form id="statusForm" method="post">
+            <div class="modal-body">
+                <p id="statusCompanyName" style="font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 12px;">
+                    Company: Company Name
+                </p>
+                <label class="search-label" style="margin-bottom: 4px;">Select new status</label>
+                <div class="status-option-grid" id="statusOptionGrid">
+                    <label class="status-option">
+                        <input type="radio" name="status" value="VERIFIED">
+                        ✅ Approve
+                    </label>
+                    <label class="status-option">
+                        <input type="radio" name="status" value="REJECTED">
+                        ❌ Reject
+                    </label>
+                    <label class="status-option">
+                        <input type="radio" name="status" value="PENDING">
+                        ⏳ Reset to Pending
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeStatusModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL 3: Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 460px;">
+        <div class="modal-header" style="background: #fef2f2;">
+            <div class="modal-title" style="color: #991b1b;">🗑️ Delete Company</div>
+            <button type="button" class="modal-close" onclick="closeDeleteModal()">✕</button>
+        </div>
+        <form id="deleteForm" method="post">
+            <div class="modal-body">
+                <p style="font-size: 14px; color: #334155; line-height: 1.5;">
+                    Are you sure you want to delete <strong id="deleteTargetName" style="color: #0f172a;">this company</strong>?
+                </p>
+                <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 12px; color: #be123c;">
+                    ⚠️ This will permanently remove the company profile, its login account, all job postings it created, and every application submitted to those jobs. This action cannot be reversed.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="btn" style="background: #ef4444; color: #fff;">Confirm Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript: Modals -->
+<script>
+    // Edit Modal
+    function openEditModal(btn) {
+        const id = btn.getAttribute('data-id');
+        const form = document.getElementById('editCompanyForm');
+        form.action = '/admin/companies/' + id + '/update';
+
+        document.getElementById('editCompanyName').value = btn.getAttribute('data-name') || '';
+        document.getElementById('editIndustry').value = btn.getAttribute('data-industry') || '';
+        document.getElementById('editLocation').value = btn.getAttribute('data-location') || '';
+        document.getElementById('editContact').value = btn.getAttribute('data-contact') || '';
+        document.getElementById('editWebsite').value = btn.getAttribute('data-website') || '';
+        document.getElementById('editPhone').value = btn.getAttribute('data-phone') || '';
+
+        document.getElementById('editCompanyModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editCompanyModal').classList.remove('active');
+    }
+
+    // Status Modal
+    function openStatusModal(btn) {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const currentStatus = btn.getAttribute('data-status') || 'PENDING';
+
+        const form = document.getElementById('statusForm');
+        form.action = '/admin/companies/' + id + '/status';
+
+        document.getElementById('statusCompanyName').innerText = 'Company: ' + (name || 'Company #' + id);
+
+        const radios = document.querySelectorAll('#statusOptionGrid input[type=radio]');
+        radios.forEach(function (r) {
+            r.checked = (r.value === currentStatus);
+            updateStatusOptionStyle(r);
+        });
+
+        document.getElementById('statusModal').classList.add('active');
+    }
+
+    function closeStatusModal() {
+        document.getElementById('statusModal').classList.remove('active');
+    }
+
+    function updateStatusOptionStyle(radio) {
+        const label = radio.closest('.status-option');
+        if (!label) return;
+        if (radio.checked) {
+            label.classList.add('selected');
+        } else {
+            label.classList.remove('selected');
+        }
+    }
+
+    document.querySelectorAll('#statusOptionGrid input[type=radio]').forEach(function (r) {
+        r.addEventListener('change', function () {
+            document.querySelectorAll('#statusOptionGrid input[type=radio]').forEach(updateStatusOptionStyle);
+        });
+    });
+
+    // Delete Modal
+    function openDeleteModal(id, name) {
+        const form = document.getElementById('deleteForm');
+        form.action = '/admin/companies/' + id + '/delete';
+        document.getElementById('deleteTargetName').innerText = name || 'this company';
+        document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+    }
+
+    // Close on Escape or click outside
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeEditModal();
+            closeStatusModal();
+            closeDeleteModal();
+        }
+    });
+
+    document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) {
+                overlay.classList.remove('active');
+            }
+        });
+    });
+</script>
 </body>
 </html>

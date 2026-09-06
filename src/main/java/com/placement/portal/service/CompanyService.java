@@ -74,10 +74,57 @@ public class CompanyService {
     public void verify(Long id, boolean approved) {
         companyRepo.findById(id).ifPresent(c -> {
             c.setVerificationStatus(
-                approved ? Company.VerificationStatus.VERIFIED : Company.VerificationStatus.REJECTED
+                    approved ? Company.VerificationStatus.VERIFIED : Company.VerificationStatus.REJECTED
             );
             companyRepo.save(c);
         });
+    }
+
+    // Generic status change: used for Approve / Revoke / Suspend / Reset to Pending
+    public Company updateVerificationStatus(Long id, Company.VerificationStatus status) {
+        Company c = companyRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+        c.setVerificationStatus(status);
+        return companyRepo.save(c);
+    }
+
+    // Edit company profile fields
+    public Company updateCompany(Long id, String companyName, String industry, String location,
+                                 String contactPerson, String website, String phone) {
+        Company c = companyRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+        if (companyName != null && !companyName.trim().isEmpty()) {
+            c.setCompanyName(companyName.trim());
+        }
+        c.setIndustry(industry);
+        c.setLocation(location);
+        c.setContactPerson(contactPerson);
+        c.setWebsite(website);
+        c.setPhone(phone);
+        return companyRepo.save(c);
+    }
+
+    // Delete company + its job postings + related applications + its login user, safely
+    public void deleteCompany(Long id) {
+        Company c = companyRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        List<JobPosting> jobs = jobRepo.findByCompany(c);
+        for (JobPosting job : jobs) {
+            List<Application> apps = appRepo.findByJobPosting(job);
+            if (!apps.isEmpty()) {
+                appRepo.deleteAll(apps);
+            }
+        }
+        if (!jobs.isEmpty()) {
+            jobRepo.deleteAll(jobs);
+        }
+
+        User user = c.getUser();
+        companyRepo.delete(c);
+        if (user != null) {
+            userRepo.delete(user);
+        }
     }
 
     public JobPosting postJob(Company c, String title, String desc, String location,
