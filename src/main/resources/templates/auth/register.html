@@ -2,29 +2,316 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"><title>Register - PlaceHub</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;padding:30px 16px}
-.card{background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);max-width:580px;margin:0 auto;padding:36px}
-.logo{text-align:center;font-size:24px;font-weight:700;color:#2563eb;margin-bottom:6px}
-.sub{text-align:center;color:#64748b;font-size:13px;margin-bottom:22px}
-.tabs{display:flex;border-bottom:2px solid #e5e7eb;margin-bottom:22px}
-.tab{flex:1;text-align:center;padding:10px;font-size:14px;font-weight:700;cursor:pointer;color:#94a3b8;text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px}
-.tab.active{color:#2563eb;border-bottom-color:#2563eb}
-.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:14px}
-.alert-err{background:#fee2e2;color:#991b1b}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grp{margin-bottom:12px}
-label{display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
-input,select,textarea{width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none}
-input:focus,select:focus{border-color:#2563eb}
-textarea{resize:vertical;height:68px}
-.btn{width:100%;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
-.btn:hover{background:#1d4ed8}
-.link{text-align:center;margin-top:14px;font-size:13px;color:#64748b}
-.link a{color:#2563eb;text-decoration:none;font-weight:700}
-.note{font-size:11px;color:#f59e0b;margin-top:8px;text-align:center}
-</style>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+              radial-gradient(circle at top left, #eef2ff 0%, transparent 35%),
+              radial-gradient(circle at bottom right, #e0e7ff 0%, transparent 35%),
+              var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 32px 18px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Register Card */
+    .card {
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px;
+      box-shadow:
+              0 4px 6px rgba(15, 23, 42, 0.04),
+              0 12px 30px rgba(15, 23, 42, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow:
+              0 8px 12px rgba(15, 23, 42, 0.05),
+              0 18px 40px rgba(15, 23, 42, 0.1);
+    }
+
+    /* Logo */
+    .logo {
+      text-align: center;
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      color: var(--primary);
+      margin-bottom: 7px;
+    }
+
+    .sub {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 11px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #94a3b8;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: #fafaff;
+    }
+
+    /* Alert */
+    .alert {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .alert-err {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    /* Form Grid */
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 16px;
+    }
+
+    .grp {
+      margin-bottom: 17px;
+    }
+
+    /* Labels */
+    label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Inputs */
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    input:hover,
+    select:hover,
+    textarea:hover {
+      border-color: #94a3b8;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 82px;
+      line-height: 1.5;
+    }
+
+    /* Register Button */
+    .btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+      box-shadow: 0 5px 14px rgba(79, 70, 229, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Login Link */
+    .link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s ease;
+    }
+
+    .link a:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    /* Company Approval Note */
+    .note {
+      font-size: 11px;
+      color: #b45309;
+      background: var(--warning-light);
+      border: 1px solid #fde68a;
+      border-radius: 9px;
+      padding: 9px 12px;
+      margin-top: 12px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 650px) {
+      body {
+        padding: 20px 14px;
+      }
+
+      .card {
+        padding: 28px 22px;
+        border-radius: 15px;
+      }
+
+      .grid2 {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .logo {
+        font-size: 25px;
+      }
+
+      .sub {
+        font-size: 12px;
+        margin-bottom: 22px;
+      }
+
+      .tab {
+        font-size: 12px;
+        padding: 10px 6px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 14px 10px;
+      }
+
+      .card {
+        padding: 24px 17px;
+        border-radius: 13px;
+      }
+
+      .logo {
+        font-size: 23px;
+      }
+
+      .tabs {
+        margin-bottom: 20px;
+      }
+
+      input,
+      select,
+      textarea {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+
+      .btn {
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
 <body>
 <div class="card">
