@@ -41,21 +41,21 @@ public class AdminController {
     public String students(Model model,
                            @RequestParam(required = false) String dept,
                            @RequestParam(required = false) String search,
-                           @RequestParam(required = false) Student.PlacementStatus status) {
+                           @RequestParam(required = false) String status) {
         List<Student> list;
-        if ((dept != null && !dept.trim().isEmpty()) || (search != null && !search.trim().isEmpty()) || status != null) {
+        if ((dept != null && !dept.trim().isEmpty()) || (search != null && !search.trim().isEmpty()) || (status != null && !status.trim().isEmpty())) {
             list = studentService.searchStudents(
                     (dept != null && !dept.trim().isEmpty()) ? dept.trim() : null,
-                    status,
+                    (status != null && !status.trim().isEmpty()) ? status.trim() : null,
                     (search != null && !search.trim().isEmpty()) ? search.trim() : null
             );
         } else {
             list = studentService.findAll();
         }
         model.addAttribute("students", list);
-        model.addAttribute("dept", dept);
-        model.addAttribute("search", search);
-        model.addAttribute("status", status != null ? status.name() : "");
+        model.addAttribute("dept", dept != null ? dept : "");
+        model.addAttribute("search", search != null ? search : "");
+        model.addAttribute("status", status != null ? status : "");
         model.addAttribute("statuses", Student.PlacementStatus.values());
         return "admin/students";
     }

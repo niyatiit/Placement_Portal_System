@@ -630,6 +630,7 @@
 
   <!-- Main Content -->
   <div class="main">
+
     <header class="topbar">
       <div class="topbar-left">
         <h1>Placement Administration</h1>
@@ -710,7 +711,7 @@
 
         <div class="progress-track">
           <div class="progress-fill"
-               th:style="${totalStudents > 0 ? 'width:' + (placedStudents * 100 / totalStudents) + '%' : 'width:0%'}"></div>
+               th:style="${totalStudents > 0} ? |width:${placedStudents * 100 / totalStudents}%;| : 'width:0%;'"></div>
         </div>
 
         <div class="progress-stats-footer">

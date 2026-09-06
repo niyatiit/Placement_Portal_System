@@ -106,8 +106,35 @@ public class StudentService {
         return studentRepo.findByIdWithUser(id);
     }
 
-    public List<Student> searchStudents(String dept, Student.PlacementStatus status, String search) {
-        return studentRepo.searchStudents(dept, status, search);
+    public List<Student> searchStudents(String dept, String status, String search) {
+        List<Student> list = studentRepo.findAllWithUser();
+        if ((dept == null || dept.isBlank()) && (status == null || status.isBlank()) && (search == null || search.isBlank())) {
+            return list;
+        }
+        return list.stream().filter(s -> {
+            boolean matchDept = true;
+            if (dept != null && !dept.isBlank()) {
+                matchDept = s.getDepartment() != null && s.getDepartment().toLowerCase().contains(dept.trim().toLowerCase());
+            }
+
+            boolean matchStatus = true;
+            if (status != null && !status.isBlank()) {
+                matchStatus = s.getPlacementStatus() != null && s.getPlacementStatus().name().equalsIgnoreCase(status.trim());
+            }
+
+            boolean matchSearch = true;
+            if (search != null && !search.isBlank()) {
+                String term = search.trim().toLowerCase();
+                boolean nameMatch = s.getUser() != null && s.getUser().getName() != null && s.getUser().getName().toLowerCase().contains(term);
+                boolean emailMatch = s.getUser() != null && s.getUser().getEmail() != null && s.getUser().getEmail().toLowerCase().contains(term);
+                boolean rollMatch = s.getRollNumber() != null && s.getRollNumber().toLowerCase().contains(term);
+                boolean phoneMatch = s.getPhone() != null && s.getPhone().contains(term);
+                boolean deptMatch = s.getDepartment() != null && s.getDepartment().toLowerCase().contains(term);
+                matchSearch = nameMatch || emailMatch || rollMatch || phoneMatch || deptMatch;
+            }
+
+            return matchDept && matchStatus && matchSearch;
+        }).toList();
     }
 
     public Student updateStudent(Long id, String name, String phone, String department,

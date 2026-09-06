@@ -288,30 +288,48 @@
       color: var(--text-main);
     }
 
-    /* Search & Filter Form */
-    .filter-grid {
+    /* Real-Time Search & Filter Grid */
+    .live-search-grid {
       display: grid;
-      grid-template-columns: 2fr 1.5fr 1.5fr auto auto;
-      gap: 12px;
-      align-items: flex-end;
+      grid-template-columns: 2fr 1.5fr 1.5fr;
+      gap: 16px;
+      align-items: center;
     }
 
-    .form-group {
+    .search-group {
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .form-label {
-      font-size: 12px;
+    .search-label {
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #475569;
+      letter-spacing: 0.6px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      color: #94a3b8;
+      pointer-events: none;
     }
 
     .form-control {
-      padding: 10px 14px;
+      padding: 11px 14px 11px 38px;
       border: 1px solid var(--border);
       border-radius: 10px;
       font-size: 13px;
@@ -320,6 +338,10 @@
       outline: none;
       transition: all 0.2s;
       width: 100%;
+    }
+
+    .form-control.no-icon {
+      padding-left: 14px;
     }
 
     .form-control:focus {
@@ -333,7 +355,7 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 10px 18px;
+      padding: 9px 16px;
       border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
@@ -525,6 +547,15 @@
       color: #991b1b;
     }
 
+    .cgpa-pill {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .cgpa-high { color: #16a34a; }
+    .cgpa-mid { color: #d97706; }
+    .cgpa-low { color: #dc2626; }
+
     .action-group {
       display: flex;
       align-items: center;
@@ -624,7 +655,7 @@
     }
 
     @media (max-width: 1024px) {
-      .filter-grid { grid-template-columns: 1fr 1fr; }
+      .live-search-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -632,7 +663,6 @@
       .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
       .main { margin-left: 70px; }
       .content { padding: 18px; }
-      .filter-grid { grid-template-columns: 1fr; }
       .form-grid-2 { grid-template-columns: 1fr; }
       .col-span-2 { grid-column: span 1; }
     }
@@ -689,11 +719,11 @@
     <header class="topbar">
       <div class="topbar-left">
         <h1>Student Directory & Management</h1>
-        <p>View, update academic profiles, manage placement offers, and remove student records.</p>
+        <p>Real-time search, live filter, academic profiles, placement records, and CRUD management.</p>
       </div>
       <div class="topbar-right">
         <span style="font-size: 13px; font-weight: 600; color: #475569;">
-          Total Registered: <strong style="color: var(--primary);" th:text="${#lists.size(students)}">0</strong>
+          Showing: <strong style="color: var(--primary);" id="studentCountBadge" th:text="${#lists.size(students)}">0</strong> of <strong th:text="${#lists.size(students)}">0</strong>
         </span>
       </div>
     </header>
@@ -712,51 +742,65 @@
         <span th:text="${error}">An error occurred.</span>
       </div>
 
-      <!-- Search & Filter Card -->
+      <!-- Instant Live Search & Filter Card (No button click needed) -->
       <div class="card">
-        <form method="get" th:action="@{/admin/students}" class="filter-grid">
-          <div class="form-group">
-            <label class="form-label">Search Candidate</label>
-            <input type="text" name="search" class="form-control" th:value="${search}" placeholder="Search name, roll no, email...">
+        <div class="live-search-grid">
+          <!-- Search Candidate Box -->
+          <div class="search-group">
+            <label class="search-label">
+              <span>🔍</span>
+              <span>Search Candidate</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">👤</span>
+              <input type="text" id="liveSearchInput" class="form-control"
+                     placeholder="Type name, roll number, or email to search live..."
+                     th:value="${search}"
+                     oninput="filterStudentsTable()">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Department</label>
-            <input type="text" name="dept" class="form-control" th:value="${dept}" placeholder="e.g. Computer Science">
+          <!-- Department Box -->
+          <div class="search-group">
+            <label class="search-label">
+              <span>🏛️</span>
+              <span>Filter by Department</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">📚</span>
+              <input type="text" id="liveDeptInput" class="form-control"
+                     placeholder="Type department (e.g. Computer Science)..."
+                     th:value="${dept}"
+                     oninput="filterStudentsTable()">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Placement Status</label>
-            <select name="status" class="form-control">
-              <option value="">All Statuses</option>
-              <option th:each="st : ${statuses}"
-                      th:value="${st.name()}"
-                      th:text="${st.name().replace('_', ' ')}"
-                      th:selected="${status == st.name()}"></option>
+          <!-- Status Dropdown -->
+          <div class="search-group">
+            <label class="search-label">
+              <span>🎯</span>
+              <span>Placement Status</span>
+            </label>
+            <select id="liveStatusSelect" class="form-control no-icon" onchange="filterStudentsTable()">
+              <option value="">All Placement Statuses</option>
+              <option value="NOT_PLACED" th:selected="${status == 'NOT_PLACED'}">NOT PLACED</option>
+              <option value="PLACED" th:selected="${status == 'PLACED'}">PLACED</option>
+              <option value="OPTED_OUT" th:selected="${status == 'OPTED_OUT'}">OPTED OUT</option>
             </select>
           </div>
-
-          <button type="submit" class="btn btn-primary">
-            <span>🔍</span>
-            <span>Filter</span>
-          </button>
-
-          <a th:href="@{/admin/students}" class="btn btn-outline">
-            <span>Reset</span>
-          </a>
-        </form>
+        </div>
       </div>
 
       <!-- Students Table Card -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">
-            Enrolled Students (<span th:text="${#lists.size(students)}">0</span>)
+            Enrolled Students Database
           </span>
         </div>
 
         <div class="table-responsive">
-          <table>
+          <table id="studentsTable">
             <thead>
               <tr>
                 <th>Candidate</th>
@@ -770,13 +814,18 @@
               </tr>
             </thead>
             <tbody>
-              <tr th:each="s : ${students}">
+              <!-- Dynamic Rows from Database -->
+              <tr th:each="s : ${students}" class="student-row"
+                  th:data-search="|${s.user != null ? s.user.name : ''} ${s.user != null ? s.user.email : ''} ${s.rollNumber != null ? s.rollNumber : ''} ${s.phone != null ? s.phone : ''}|"
+                  th:data-dept="${s.department != null ? s.department : ''}"
+                  th:data-status="${s.placementStatus != null ? s.placementStatus.name() : ''}">
+
                 <!-- Candidate Info -->
                 <td>
                   <div class="student-cell">
                     <div class="avatar-sm" th:text="${s.user != null and s.user.name != null and !#strings.isEmpty(s.user.name) ? #strings.substring(s.user.name, 0, 1) : 'S'}">S</div>
                     <div>
-                      <div class="student-name" th:text="${s.user != null ? s.user.name : '-'}">Student Name</div>
+                      <div class="student-name" th:text="${s.user != null ? s.user.name : 'Unknown Candidate'}">Student Name</div>
                       <div class="student-sub" th:text="${s.user != null ? s.user.email : '-'}">email@student.com</div>
                       <div class="student-sub" style="color: #6366f1;" th:text="${s.phone != null ? s.phone : '-'}">phone</div>
                     </div>
@@ -791,18 +840,18 @@
                 <!-- Department & Batch -->
                 <td>
                   <div style="font-weight: 600;" th:text="${s.department != null ? s.department : '-'}">Dept</div>
-                  <div class="student-sub" th:text="${s.batch != null ? 'Batch: ' + s.batch : '-'}">Batch</div>
+                  <div class="student-sub" th:text="${s.batch != null} ? |Batch: ${s.batch}| : '-'">Batch</div>
                 </td>
 
                 <!-- Academics -->
                 <td>
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-weight: 800; font-size: 14px;"
-                          th:style="${(s.cgpa != null and s.cgpa >= 8.0)} ? 'color:#16a34a' : ((s.cgpa != null and s.cgpa >= 6.0) ? 'color:#d97706' : 'color:#dc2626')"
-                          th:text="${s.cgpa != null ? s.cgpa + ' CGPA' : '-'}">-</span>
+                    <span class="cgpa-pill"
+                          th:classappend="${s.cgpa != null and s.cgpa >= 8.0} ? 'cgpa-high' : (${s.cgpa != null and s.cgpa >= 6.0} ? 'cgpa-mid' : 'cgpa-low')"
+                          th:text="${s.cgpa != null} ? |${s.cgpa} CGPA| : '-'">-</span>
                     <span class="backlog-badge"
                           th:classappend="${s.backlogs == null or s.backlogs == 0} ? 'backlog-zero' : 'backlog-warn'"
-                          th:text="${s.backlogs != null and s.backlogs > 0 ? s.backlogs + ' backlog(s)' : '0 backlogs'}">
+                          th:text="${s.backlogs != null and s.backlogs > 0} ? |${s.backlogs} backlog(s)| : '0 backlogs'">
                       0 backlogs
                     </span>
                   </div>
@@ -811,10 +860,10 @@
                 <!-- 10th / 12th -->
                 <td>
                   <div style="font-size: 12px; font-weight: 500;">
-                    10th: <strong th:text="${s.tenthPercentage != null ? s.tenthPercentage + '%' : '-'}">-</strong>
+                    10th: <strong th:text="${s.tenthPercentage != null} ? |${s.tenthPercentage}%| : '-'">-</strong>
                   </div>
                   <div style="font-size: 12px; font-weight: 500; color: #64748b;">
-                    12th: <strong th:text="${s.twelfthPercentage != null ? s.twelfthPercentage + '%' : '-'}">-</strong>
+                    12th: <strong th:text="${s.twelfthPercentage != null} ? |${s.twelfthPercentage}%| : '-'">-</strong>
                   </div>
                 </td>
 
@@ -822,7 +871,7 @@
                 <td>
                   <span class="badge"
                         th:classappend="${s.placementStatus != null and s.placementStatus.name() == 'PLACED'} ? 'badge-placed' : (${s.placementStatus != null and s.placementStatus.name() == 'NOT_PLACED'} ? 'badge-not-placed' : 'badge-opted-out')"
-                        th:text="${s.placementStatus != null ? s.placementStatus.name().replace('_', ' ') : '-'}">
+                        th:text="${s.placementStatus != null ? s.placementStatus.name().replace('_', ' ') : 'NOT PLACED'}">
                     Status
                   </span>
                 </td>
@@ -831,7 +880,7 @@
                 <td>
                   <div th:if="${s.placementStatus != null and s.placementStatus.name() == 'PLACED'}">
                     <div style="color: #15803d; font-weight: 700;" th:text="${s.placedCompany != null ? s.placedCompany : 'Company Listed'}">Company</div>
-                    <div style="font-size: 12px; color: #047857;" th:text="${s.placementPackage != null ? s.placementPackage + ' LPA' : ''}">0 LPA</div>
+                    <div style="font-size: 12px; color: #047857;" th:text="${s.placementPackage != null} ? |${s.placementPackage} LPA| : ''">0 LPA</div>
                   </div>
                   <div th:if="${s.placementStatus == null or s.placementStatus.name() != 'PLACED'}" style="color: #94a3b8; font-size: 12px;">
                     Not Placed
@@ -841,7 +890,6 @@
                 <!-- Actions -->
                 <td style="text-align: right;">
                   <div class="action-group" style="justify-content: flex-end;">
-                    <!-- Quick Status Toggle Button -->
                     <button type="button" class="btn btn-sm btn-action-status"
                             title="Update Placement Status"
                             th:data-id="${s.id}"
@@ -853,7 +901,6 @@
                       🏆 Status
                     </button>
 
-                    <!-- Edit Button -->
                     <button type="button" class="btn btn-sm btn-action-edit"
                             title="Edit Student Profile"
                             th:data-id="${s.id}"
@@ -874,7 +921,6 @@
                       ✏️ Edit
                     </button>
 
-                    <!-- Delete Button -->
                     <button type="button" class="btn btn-sm btn-action-delete"
                             title="Delete Student"
                             th:data-id="${s.id}"
@@ -886,9 +932,17 @@
                 </td>
               </tr>
 
+              <!-- Row when database has 0 students initially -->
               <tr th:if="${#lists.isEmpty(students)}">
                 <td colspan="8" style="text-align: center; color: #94a3b8; padding: 48px;">
-                  No students found matching the selected search criteria.
+                  No students found in the database.
+                </td>
+              </tr>
+
+              <!-- Dynamic row when live search finds 0 matches -->
+              <tr id="noMatchRow" style="display: none;">
+                <td colspan="8" style="text-align: center; color: #94a3b8; padding: 48px;">
+                  🔍 No students found matching your live search query.
                 </td>
               </tr>
             </tbody>
@@ -910,53 +964,53 @@
         <div class="modal-body">
           <div class="form-grid-2">
             <div class="form-group col-span-2">
-              <label class="form-label">Full Name *</label>
-              <input type="text" id="editName" name="name" class="form-control" required>
+              <label class="search-label" style="margin-bottom: 4px;">Full Name *</label>
+              <input type="text" id="editName" name="name" class="form-control no-icon" required>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Roll Number</label>
-              <input type="text" id="editRoll" name="rollNumber" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">Roll Number</label>
+              <input type="text" id="editRoll" name="rollNumber" class="form-control no-icon">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Phone Number</label>
-              <input type="text" id="editPhone" name="phone" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">Phone Number</label>
+              <input type="text" id="editPhone" name="phone" class="form-control no-icon">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Department</label>
-              <input type="text" id="editDept" name="department" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">Department</label>
+              <input type="text" id="editDept" name="department" class="form-control no-icon">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Batch</label>
-              <input type="text" id="editBatch" name="batch" class="form-control" placeholder="e.g. 2020-2024">
+              <label class="search-label" style="margin-bottom: 4px;">Batch</label>
+              <input type="text" id="editBatch" name="batch" class="form-control no-icon" placeholder="e.g. 2021-2025">
             </div>
 
             <div class="form-group">
-              <label class="form-label">CGPA</label>
-              <input type="number" step="0.01" min="0" max="10" id="editCgpa" name="cgpa" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" id="editCgpa" name="cgpa" class="form-control no-icon">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Active Backlogs</label>
-              <input type="number" min="0" id="editBacklogs" name="backlogs" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">Active Backlogs</label>
+              <input type="number" min="0" id="editBacklogs" name="backlogs" class="form-control no-icon">
             </div>
 
             <div class="form-group">
-              <label class="form-label">10th Percentage (%)</label>
-              <input type="number" step="0.01" min="0" max="100" id="editTenth" name="tenthPercentage" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">10th Percentage (%)</label>
+              <input type="number" step="0.01" min="0" max="100" id="editTenth" name="tenthPercentage" class="form-control no-icon">
             </div>
 
             <div class="form-group">
-              <label class="form-label">12th Percentage (%)</label>
-              <input type="number" step="0.01" min="0" max="100" id="editTwelfth" name="twelfthPercentage" class="form-control">
+              <label class="search-label" style="margin-bottom: 4px;">12th Percentage (%)</label>
+              <input type="number" step="0.01" min="0" max="100" id="editTwelfth" name="twelfthPercentage" class="form-control no-icon">
             </div>
 
             <div class="form-group col-span-2">
-              <label class="form-label">Placement Status</label>
-              <select id="editStatus" name="placementStatus" class="form-control" onchange="toggleEditCompanyFields()">
+              <label class="search-label" style="margin-bottom: 4px;">Placement Status</label>
+              <select id="editStatus" name="placementStatus" class="form-control no-icon" onchange="toggleEditCompanyFields()">
                 <option value="NOT_PLACED">NOT PLACED</option>
                 <option value="PLACED">PLACED</option>
                 <option value="OPTED_OUT">OPTED OUT</option>
@@ -964,13 +1018,13 @@
             </div>
 
             <div class="form-group" id="editCompanyGroup" style="display: none;">
-              <label class="form-label">Placed Company</label>
-              <input type="text" id="editCompany" name="placedCompany" class="form-control" placeholder="e.g. Google, TCS, Infosys">
+              <label class="search-label" style="margin-bottom: 4px;">Placed Company</label>
+              <input type="text" id="editCompany" name="placedCompany" class="form-control no-icon" placeholder="e.g. Google, TCS, Infosys">
             </div>
 
             <div class="form-group" id="editPackageGroup" style="display: none;">
-              <label class="form-label">Package (LPA)</label>
-              <input type="number" step="0.1" min="0" id="editPackage" name="placementPackage" class="form-control" placeholder="e.g. 8.5">
+              <label class="search-label" style="margin-bottom: 4px;">Package (LPA)</label>
+              <input type="number" step="0.1" min="0" id="editPackage" name="placementPackage" class="form-control no-icon" placeholder="e.g. 8.5">
             </div>
           </div>
         </div>
@@ -995,8 +1049,8 @@
             Candidate: Student Name
           </p>
           <div class="form-group" style="margin-bottom: 14px;">
-            <label class="form-label">Status</label>
-            <select id="quickStatusSelect" name="placementStatus" class="form-control" onchange="toggleQuickCompanyFields()">
+            <label class="search-label" style="margin-bottom: 4px;">Status</label>
+            <select id="quickStatusSelect" name="placementStatus" class="form-control no-icon" onchange="toggleQuickCompanyFields()">
               <option value="NOT_PLACED">NOT PLACED</option>
               <option value="PLACED">PLACED</option>
               <option value="OPTED_OUT">OPTED OUT</option>
@@ -1005,13 +1059,13 @@
 
           <div id="quickCompanyWrapper" style="display: none;">
             <div class="form-group" style="margin-bottom: 14px;">
-              <label class="form-label">Placed Company</label>
-              <input type="text" id="quickCompany" name="placedCompany" class="form-control" placeholder="e.g. Microsoft">
+              <label class="search-label" style="margin-bottom: 4px;">Placed Company</label>
+              <input type="text" id="quickCompany" name="placedCompany" class="form-control no-icon" placeholder="e.g. Microsoft">
             </div>
 
             <div class="form-group" style="margin-bottom: 14px;">
-              <label class="form-label">Package (LPA)</label>
-              <input type="number" step="0.1" min="0" id="quickPackage" name="placementPackage" class="form-control" placeholder="e.g. 12.0">
+              <label class="search-label" style="margin-bottom: 4px;">Package (LPA)</label>
+              <input type="number" step="0.1" min="0" id="quickPackage" name="placementPackage" class="form-control no-icon" placeholder="e.g. 12.0">
             </div>
           </div>
         </div>
@@ -1047,8 +1101,56 @@
     </div>
   </div>
 
-  <!-- JavaScript for Interactive Controls -->
+  <!-- JavaScript: Instant Live Search as you type & Modals -->
   <script>
+    // Live Filter Table Function - Instant on typing
+    function filterStudentsTable() {
+      const searchInput = document.getElementById('liveSearchInput');
+      const deptInput = document.getElementById('liveDeptInput');
+      const statusSelect = document.getElementById('liveStatusSelect');
+
+      const searchTerm = (searchInput ? searchInput.value : '').trim().toLowerCase();
+      const deptTerm = (deptInput ? deptInput.value : '').trim().toLowerCase();
+      const statusTerm = (statusSelect ? statusSelect.value : '').trim().toUpperCase();
+
+      const rows = document.querySelectorAll('.student-row');
+      let visibleCount = 0;
+
+      rows.forEach(function(row) {
+        const searchData = (row.getAttribute('data-search') || '').toLowerCase();
+        const deptData = (row.getAttribute('data-dept') || '').toLowerCase();
+        const statusData = (row.getAttribute('data-status') || '').toUpperCase();
+
+        const matchesSearch = !searchTerm || searchData.includes(searchTerm);
+        const matchesDept = !deptTerm || deptData.includes(deptTerm);
+        const matchesStatus = !statusTerm || statusData === statusTerm;
+
+        if (matchesSearch && matchesDept && matchesStatus) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update counter badge
+      const countBadge = document.getElementById('studentCountBadge');
+      if (countBadge) {
+        countBadge.innerText = visibleCount;
+      }
+
+      // Show/hide no match row
+      const noMatchRow = document.getElementById('noMatchRow');
+      if (noMatchRow) {
+        noMatchRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+      }
+    }
+
+    // Run filter once on page load if query params were pre-filled
+    document.addEventListener('DOMContentLoaded', function() {
+      filterStudentsTable();
+    });
+
     // Edit Modal logic
     function openEditModal(btn) {
       const id = btn.getAttribute('data-id');
