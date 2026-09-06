@@ -1,5 +1,6 @@
 package com.placement.portal.controller;
 
+import com.placement.portal.model.Student;
 import com.placement.portal.repository.JobPostingRepository;
 import com.placement.portal.service.CompanyService;
 import com.placement.portal.service.StudentService;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -34,12 +37,78 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    @GetMapping("/students")
-    public String students(Model model, @RequestParam(required = false) String dept) {
-        var list = (dept != null && !dept.isEmpty()) ? studentService.findByDept(dept) : studentService.findAll();
+    @GetMapping({"/students", "/student"})
+    public String students(Model model,
+                           @RequestParam(required = false) String dept,
+                           @RequestParam(required = false) String search,
+                           @RequestParam(required = false) Student.PlacementStatus status) {
+        List<Student> list;
+        if ((dept != null && !dept.trim().isEmpty()) || (search != null && !search.trim().isEmpty()) || status != null) {
+            list = studentService.searchStudents(
+                    (dept != null && !dept.trim().isEmpty()) ? dept.trim() : null,
+                    status,
+                    (search != null && !search.trim().isEmpty()) ? search.trim() : null
+            );
+        } else {
+            list = studentService.findAll();
+        }
         model.addAttribute("students", list);
         model.addAttribute("dept", dept);
+        model.addAttribute("search", search);
+        model.addAttribute("status", status != null ? status.name() : "");
+        model.addAttribute("statuses", Student.PlacementStatus.values());
         return "admin/students";
+    }
+
+    @PostMapping("/students/{id}/update")
+    public String updateStudent(@PathVariable Long id,
+                               @RequestParam String name,
+                               @RequestParam(required = false) String phone,
+                               @RequestParam(required = false) String department,
+                               @RequestParam(required = false) String batch,
+                               @RequestParam(required = false) String rollNumber,
+                               @RequestParam(required = false) Double cgpa,
+                               @RequestParam(required = false) Integer backlogs,
+                               @RequestParam(required = false) Double tenthPercentage,
+                               @RequestParam(required = false) Double twelfthPercentage,
+                               @RequestParam(required = false) Student.PlacementStatus placementStatus,
+                               @RequestParam(required = false) String placedCompany,
+                               @RequestParam(required = false) Double placementPackage,
+                               RedirectAttributes ra) {
+        try {
+            studentService.updateStudent(id, name, phone, department, batch, rollNumber,
+                    cgpa, backlogs, tenthPercentage, twelfthPercentage, placementStatus, placedCompany, placementPackage);
+            ra.addFlashAttribute("success", "Student details updated successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update student: " + e.getMessage());
+        }
+        return "redirect:/admin/students";
+    }
+
+    @PostMapping("/students/{id}/delete")
+    public String deleteStudent(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            studentService.deleteStudent(id);
+            ra.addFlashAttribute("success", "Student deleted successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to delete student: " + e.getMessage());
+        }
+        return "redirect:/admin/students";
+    }
+
+    @PostMapping("/students/{id}/status")
+    public String updateStatus(@PathVariable Long id,
+                               @RequestParam Student.PlacementStatus placementStatus,
+                               @RequestParam(required = false) String placedCompany,
+                               @RequestParam(required = false) Double placementPackage,
+                               RedirectAttributes ra) {
+        try {
+            studentService.updatePlacementStatus(id, placementStatus, placedCompany, placementPackage);
+            ra.addFlashAttribute("success", "Placement status updated successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to update status: " + e.getMessage());
+        }
+        return "redirect:/admin/students";
     }
 
     @GetMapping("/companies")

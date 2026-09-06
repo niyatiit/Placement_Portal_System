@@ -1,119 +1,1145 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>Students - PlaceHub Admin</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
-.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
-.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
-.nav{flex:1;padding:12px 8px}
-.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
-.nav a:hover,.nav a.active{background:#334155;color:#fff}
-.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
-.sidebar-foot{padding:12px;border-top:1px solid #334155}
-.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
-.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
-.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
-.logout:hover{background:#dc2626}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
-.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
-.content{padding:24px;flex:1}
-.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:15px;font-weight:700;color:#1e293b}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#f8fafc;padding:9px 12px;text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0}
-td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151;vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafafa}
-.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.b-green{background:#dcfce7;color:#166534}
-.b-yellow{background:#fef9c3;color:#713f12}
-.b-gray{background:#f1f5f9;color:#475569}
-.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-primary:hover{background:#1d4ed8}
-.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db}
-.btn-outline:hover{background:#f8fafc}
-.btn-sm{padding:5px 10px;font-size:11px}
-input{padding:8px 11px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none}
-input:focus{border-color:#2563eb}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Directory - PlaceHub Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --danger-light: #fef2f2;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --sidebar-text: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      border-right: 1px solid #1e293b;
+    }
+
+    .brand {
+      padding: 24px 20px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand span {
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav {
+      flex: 1;
+      padding: 20px 14px;
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #475569;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .nav a:hover {
+      background: var(--sidebar-hover);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .nav a.active {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid #1e293b;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .admin-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: #1e293b;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .admin-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .admin-meta {
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .admin-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .admin-role {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+
+    /* Main Area */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+    }
+
+    .topbar-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .content {
+      padding: 32px;
+      flex: 1;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .alert-success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Search & Filter Form */
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1.5fr auto auto;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #475569;
+    }
+
+    .form-control {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+
+    .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .btn-action-edit {
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+
+    .btn-action-edit:hover {
+      background: #4338ca;
+      color: #ffffff;
+    }
+
+    .btn-action-status {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .btn-action-status:hover {
+      background: #059669;
+      color: #ffffff;
+    }
+
+    .btn-action-delete {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-action-delete:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    /* Table */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    thead th {
+      background: #f8fafc;
+      padding: 12px 16px;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Student Cell */
+    .student-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .student-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .student-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .badge-placed {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-not-placed {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fef08a;
+    }
+
+    .badge-opted-out {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+
+    .backlog-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .backlog-zero {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .backlog-warn {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 620px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-main);
+      background: #e2e8f0;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .col-span-2 {
+      grid-column: span 2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 1024px) {
+      .filter-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 70px; }
+      .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
+      .main { margin-left: 70px; }
+      .content { padding: 18px; }
+      .filter-grid { grid-template-columns: 1fr; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .col-span-2 { grid-column: span 1; }
+    }
+  </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="brand">🎓 PlaceHub</div>
-  <div class="nav">
-    <div class="nav-section">Admin Panel</div>
-    <a href="/admin/dashboard">📊 Dashboard</a>
-    <a href="/admin/students" class="active">👨‍🎓 Students</a>
-    <a href="/admin/companies">🏢 Companies</a>
-    <a href="/admin/jobs">💼 Job Postings</a>
-    <a href="/admin/placements">🏆 Placements</a>
-  </div>
-  <div class="sidebar-foot">
-    <div class="user-info"><div class="user-name">Admin</div><div>Administrator</div></div>
-    <a href="/auth/logout" class="logout">Logout</a>
-  </div>
-</div>
-<div class="main">
-  <div class="topbar"><h1>Student Management</h1></div>
-  <div class="content">
-    <div class="card" style="margin-bottom:18px">
-      <form method="get" action="/admin/students" style="display:flex;gap:10px;align-items:flex-end">
-        <div>
-          <label style="display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase">Filter by Department</label>
-          <input type="text" name="dept" th:value="${dept}" placeholder="e.g. Computer Science">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🎓</div>
+      <span>PlaceHub</span>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Main Navigation</div>
+      <a th:href="@{/admin/dashboard}">
+        <span>📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a th:href="@{/admin/students}" class="active">
+        <span>👨‍🎓</span>
+        <span>Students</span>
+      </a>
+      <a th:href="@{/admin/companies}">
+        <span>🏢</span>
+        <span>Companies</span>
+      </a>
+      <a th:href="@{/admin/jobs}">
+        <span>💼</span>
+        <span>Job Postings</span>
+      </a>
+      <a th:href="@{/admin/placements}">
+        <span>🏆</span>
+        <span>Placements</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-pill">
+        <div class="admin-avatar">AD</div>
+        <div class="admin-meta">
+          <div class="admin-name">Administrator</div>
+          <div class="admin-role">System Admin</div>
         </div>
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="/admin/students" class="btn btn-outline">Clear</a>
+      </div>
+      <a th:href="@{/auth/logout}" class="btn-logout">
+        <span>🚪</span>
+        <span>Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Student Directory & Management</h1>
+        <p>View, update academic profiles, manage placement offers, and remove student records.</p>
+      </div>
+      <div class="topbar-right">
+        <span style="font-size: 13px; font-weight: 600; color: #475569;">
+          Total Registered: <strong style="color: var(--primary);" th:text="${#lists.size(students)}">0</strong>
+        </span>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- Success Alert -->
+      <div th:if="${success}" class="alert-banner alert-success">
+        <span style="font-size: 18px;">✅</span>
+        <span th:text="${success}">Action completed successfully.</span>
+      </div>
+
+      <!-- Error Alert -->
+      <div th:if="${error}" class="alert-banner alert-error">
+        <span style="font-size: 18px;">❌</span>
+        <span th:text="${error}">An error occurred.</span>
+      </div>
+
+      <!-- Search & Filter Card -->
+      <div class="card">
+        <form method="get" th:action="@{/admin/students}" class="filter-grid">
+          <div class="form-group">
+            <label class="form-label">Search Candidate</label>
+            <input type="text" name="search" class="form-control" th:value="${search}" placeholder="Search name, roll no, email...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <input type="text" name="dept" class="form-control" th:value="${dept}" placeholder="e.g. Computer Science">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Placement Status</label>
+            <select name="status" class="form-control">
+              <option value="">All Statuses</option>
+              <option th:each="st : ${statuses}"
+                      th:value="${st.name()}"
+                      th:text="${st.name().replace('_', ' ')}"
+                      th:selected="${status == st.name()}"></option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <span>🔍</span>
+            <span>Filter</span>
+          </button>
+
+          <a th:href="@{/admin/students}" class="btn btn-outline">
+            <span>Reset</span>
+          </a>
+        </form>
+      </div>
+
+      <!-- Students Table Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            Enrolled Students (<span th:text="${#lists.size(students)}">0</span>)
+          </span>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Roll No</th>
+                <th>Department & Batch</th>
+                <th>Academics (CGPA / Backlogs)</th>
+                <th>10th / 12th %</th>
+                <th>Status</th>
+                <th>Placement Details</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="s : ${students}">
+                <!-- Candidate Info -->
+                <td>
+                  <div class="student-cell">
+                    <div class="avatar-sm" th:text="${s.user != null and s.user.name != null and !#strings.isEmpty(s.user.name) ? #strings.substring(s.user.name, 0, 1) : 'S'}">S</div>
+                    <div>
+                      <div class="student-name" th:text="${s.user != null ? s.user.name : '-'}">Student Name</div>
+                      <div class="student-sub" th:text="${s.user != null ? s.user.email : '-'}">email@student.com</div>
+                      <div class="student-sub" style="color: #6366f1;" th:text="${s.phone != null ? s.phone : '-'}">phone</div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Roll Number -->
+                <td>
+                  <span style="font-weight: 700; font-family: monospace; color: #334155;" th:text="${s.rollNumber != null ? s.rollNumber : '-'}">-</span>
+                </td>
+
+                <!-- Department & Batch -->
+                <td>
+                  <div style="font-weight: 600;" th:text="${s.department != null ? s.department : '-'}">Dept</div>
+                  <div class="student-sub" th:text="${s.batch != null ? 'Batch: ' + s.batch : '-'}">Batch</div>
+                </td>
+
+                <!-- Academics -->
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight: 800; font-size: 14px;"
+                          th:style="${(s.cgpa != null and s.cgpa >= 8.0)} ? 'color:#16a34a' : ((s.cgpa != null and s.cgpa >= 6.0) ? 'color:#d97706' : 'color:#dc2626')"
+                          th:text="${s.cgpa != null ? s.cgpa + ' CGPA' : '-'}">-</span>
+                    <span class="backlog-badge"
+                          th:classappend="${s.backlogs == null or s.backlogs == 0} ? 'backlog-zero' : 'backlog-warn'"
+                          th:text="${s.backlogs != null and s.backlogs > 0 ? s.backlogs + ' backlog(s)' : '0 backlogs'}">
+                      0 backlogs
+                    </span>
+                  </div>
+                </td>
+
+                <!-- 10th / 12th -->
+                <td>
+                  <div style="font-size: 12px; font-weight: 500;">
+                    10th: <strong th:text="${s.tenthPercentage != null ? s.tenthPercentage + '%' : '-'}">-</strong>
+                  </div>
+                  <div style="font-size: 12px; font-weight: 500; color: #64748b;">
+                    12th: <strong th:text="${s.twelfthPercentage != null ? s.twelfthPercentage + '%' : '-'}">-</strong>
+                  </div>
+                </td>
+
+                <!-- Status -->
+                <td>
+                  <span class="badge"
+                        th:classappend="${s.placementStatus != null and s.placementStatus.name() == 'PLACED'} ? 'badge-placed' : (${s.placementStatus != null and s.placementStatus.name() == 'NOT_PLACED'} ? 'badge-not-placed' : 'badge-opted-out')"
+                        th:text="${s.placementStatus != null ? s.placementStatus.name().replace('_', ' ') : '-'}">
+                    Status
+                  </span>
+                </td>
+
+                <!-- Placement Info -->
+                <td>
+                  <div th:if="${s.placementStatus != null and s.placementStatus.name() == 'PLACED'}">
+                    <div style="color: #15803d; font-weight: 700;" th:text="${s.placedCompany != null ? s.placedCompany : 'Company Listed'}">Company</div>
+                    <div style="font-size: 12px; color: #047857;" th:text="${s.placementPackage != null ? s.placementPackage + ' LPA' : ''}">0 LPA</div>
+                  </div>
+                  <div th:if="${s.placementStatus == null or s.placementStatus.name() != 'PLACED'}" style="color: #94a3b8; font-size: 12px;">
+                    Not Placed
+                  </div>
+                </td>
+
+                <!-- Actions -->
+                <td style="text-align: right;">
+                  <div class="action-group" style="justify-content: flex-end;">
+                    <!-- Quick Status Toggle Button -->
+                    <button type="button" class="btn btn-sm btn-action-status"
+                            title="Update Placement Status"
+                            th:data-id="${s.id}"
+                            th:data-name="${s.user != null ? s.user.name : ''}"
+                            th:data-status="${s.placementStatus != null ? s.placementStatus.name() : 'NOT_PLACED'}"
+                            th:data-company="${s.placedCompany != null ? s.placedCompany : ''}"
+                            th:data-package="${s.placementPackage != null ? s.placementPackage : ''}"
+                            onclick="openStatusModal(this)">
+                      🏆 Status
+                    </button>
+
+                    <!-- Edit Button -->
+                    <button type="button" class="btn btn-sm btn-action-edit"
+                            title="Edit Student Profile"
+                            th:data-id="${s.id}"
+                            th:data-name="${s.user != null ? s.user.name : ''}"
+                            th:data-email="${s.user != null ? s.user.email : ''}"
+                            th:data-phone="${s.phone != null ? s.phone : ''}"
+                            th:data-dept="${s.department != null ? s.department : ''}"
+                            th:data-batch="${s.batch != null ? s.batch : ''}"
+                            th:data-roll="${s.rollNumber != null ? s.rollNumber : ''}"
+                            th:data-cgpa="${s.cgpa != null ? s.cgpa : ''}"
+                            th:data-backlogs="${s.backlogs != null ? s.backlogs : 0}"
+                            th:data-tenth="${s.tenthPercentage != null ? s.tenthPercentage : ''}"
+                            th:data-twelfth="${s.twelfthPercentage != null ? s.twelfthPercentage : ''}"
+                            th:data-status="${s.placementStatus != null ? s.placementStatus.name() : 'NOT_PLACED'}"
+                            th:data-company="${s.placedCompany != null ? s.placedCompany : ''}"
+                            th:data-package="${s.placementPackage != null ? s.placementPackage : ''}"
+                            onclick="openEditModal(this)">
+                      ✏️ Edit
+                    </button>
+
+                    <!-- Delete Button -->
+                    <button type="button" class="btn btn-sm btn-action-delete"
+                            title="Delete Student"
+                            th:data-id="${s.id}"
+                            th:data-name="${s.user != null ? s.user.name : 'this student'}"
+                            onclick="openDeleteModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                      🗑️ Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr th:if="${#lists.isEmpty(students)}">
+                <td colspan="8" style="text-align: center; color: #94a3b8; padding: 48px;">
+                  No students found matching the selected search criteria.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL 1: Edit Student Modal -->
+  <div id="editStudentModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">✏️ Edit Student Profile</div>
+        <button type="button" class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <form id="editStudentForm" method="post">
+        <div class="modal-body">
+          <div class="form-grid-2">
+            <div class="form-group col-span-2">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="editName" name="name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Roll Number</label>
+              <input type="text" id="editRoll" name="rollNumber" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="text" id="editPhone" name="phone" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <input type="text" id="editDept" name="department" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Batch</label>
+              <input type="text" id="editBatch" name="batch" class="form-control" placeholder="e.g. 2020-2024">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" id="editCgpa" name="cgpa" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Active Backlogs</label>
+              <input type="number" min="0" id="editBacklogs" name="backlogs" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">10th Percentage (%)</label>
+              <input type="number" step="0.01" min="0" max="100" id="editTenth" name="tenthPercentage" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">12th Percentage (%)</label>
+              <input type="number" step="0.01" min="0" max="100" id="editTwelfth" name="twelfthPercentage" class="form-control">
+            </div>
+
+            <div class="form-group col-span-2">
+              <label class="form-label">Placement Status</label>
+              <select id="editStatus" name="placementStatus" class="form-control" onchange="toggleEditCompanyFields()">
+                <option value="NOT_PLACED">NOT PLACED</option>
+                <option value="PLACED">PLACED</option>
+                <option value="OPTED_OUT">OPTED OUT</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="editCompanyGroup" style="display: none;">
+              <label class="form-label">Placed Company</label>
+              <input type="text" id="editCompany" name="placedCompany" class="form-control" placeholder="e.g. Google, TCS, Infosys">
+            </div>
+
+            <div class="form-group" id="editPackageGroup" style="display: none;">
+              <label class="form-label">Package (LPA)</label>
+              <input type="number" step="0.1" min="0" id="editPackage" name="placementPackage" class="form-control" placeholder="e.g. 8.5">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
       </form>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">All Students (<span th:text="${#lists.size(students)}">0</span>)</span>
+  </div>
+
+  <!-- MODAL 2: Quick Status Modal -->
+  <div id="statusModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title">🏆 Update Placement Status</div>
+        <button type="button" class="modal-close" onclick="closeStatusModal()">✕</button>
       </div>
-      <table>
-        <thead>
-          <tr><th>Student</th><th>Roll No</th><th>Dept / Batch</th><th>CGPA</th><th>Backlogs</th><th>10th%</th><th>12th%</th><th>Status</th><th>Placed At</th></tr>
-        </thead>
-        <tbody>
-          <tr th:each="s : ${students}">
-            <td>
-              <div style="font-weight:600" th:text="${s.user.name}">Name</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${s.user.email}">email</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${s.phone}">phone</div>
-            </td>
-            <td style="font-weight:600" th:text="${s.rollNumber}">-</td>
-            <td>
-              <div th:text="${s.department}">-</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${s.batch}">-</div>
-            </td>
-            <td>
-              <span style="font-weight:700"
-                th:style="${(s.cgpa != null and s.cgpa >= 8.0)} ? 'color:#16a34a' : ((s.cgpa != null and s.cgpa >= 6.0) ? 'color:#f59e0b' : 'color:#dc2626')"
-                th:text="${s.cgpa}">-</span>
-            </td>
-            <td th:text="${s.backlogs}">0</td>
-            <td th:text="${s.tenthPercentage != null ? s.tenthPercentage + '%' : '-'}">-</td>
-            <td th:text="${s.twelfthPercentage != null ? s.twelfthPercentage + '%' : '-'}">-</td>
-            <td>
-              <span class="badge"
-                th:classappend="${s.placementStatus.name() == 'PLACED'} ? 'b-green' : 'b-yellow'"
-                th:text="${s.placementStatus.name().replace('_',' ')}">-</span>
-            </td>
-            <td style="font-size:12px;color:#16a34a;font-weight:600"
-                th:text="${s.placedCompany != null ? s.placedCompany : '-'}">-</td>
-          </tr>
-          <tr th:if="${#lists.isEmpty(students)}">
-            <td colspan="9" style="text-align:center;color:#94a3b8;padding:32px">No students found.</td>
-          </tr>
-        </tbody>
-      </table>
+      <form id="statusForm" method="post">
+        <div class="modal-body">
+          <p id="statusStudentName" style="font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 16px;">
+            Candidate: Student Name
+          </p>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Status</label>
+            <select id="quickStatusSelect" name="placementStatus" class="form-control" onchange="toggleQuickCompanyFields()">
+              <option value="NOT_PLACED">NOT PLACED</option>
+              <option value="PLACED">PLACED</option>
+              <option value="OPTED_OUT">OPTED OUT</option>
+            </select>
+          </div>
+
+          <div id="quickCompanyWrapper" style="display: none;">
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">Placed Company</label>
+              <input type="text" id="quickCompany" name="placedCompany" class="form-control" placeholder="e.g. Microsoft">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">Package (LPA)</label>
+              <input type="number" step="0.1" min="0" id="quickPackage" name="placementPackage" class="form-control" placeholder="e.g. 12.0">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeStatusModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Status</button>
+        </div>
+      </form>
     </div>
   </div>
-</div>
+
+  <!-- MODAL 3: Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="background: #fef2f2;">
+        <div class="modal-title" style="color: #991b1b;">🗑️ Delete Student Record</div>
+        <button type="button" class="modal-close" onclick="closeDeleteModal()">✕</button>
+      </div>
+      <form id="deleteForm" method="post">
+        <div class="modal-body">
+          <p style="font-size: 14px; color: #334155; line-height: 1.5;">
+            Are you sure you want to delete <strong id="deleteTargetName" style="color: #0f172a;">this student</strong>?
+          </p>
+          <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 12px; color: #be123c;">
+            ⚠️ This will permanently remove the student's profile, user credentials, and any job applications submitted. This action cannot be reversed.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+          <button type="submit" class="btn" style="background: #ef4444; color: #fff;">Confirm Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript for Interactive Controls -->
+  <script>
+    // Edit Modal logic
+    function openEditModal(btn) {
+      const id = btn.getAttribute('data-id');
+      const form = document.getElementById('editStudentForm');
+      form.action = '/admin/students/' + id + '/update';
+
+      document.getElementById('editName').value = btn.getAttribute('data-name') || '';
+      document.getElementById('editRoll').value = btn.getAttribute('data-roll') || '';
+      document.getElementById('editPhone').value = btn.getAttribute('data-phone') || '';
+      document.getElementById('editDept').value = btn.getAttribute('data-dept') || '';
+      document.getElementById('editBatch').value = btn.getAttribute('data-batch') || '';
+      document.getElementById('editCgpa').value = btn.getAttribute('data-cgpa') || '';
+      document.getElementById('editBacklogs').value = btn.getAttribute('data-backlogs') || '0';
+      document.getElementById('editTenth').value = btn.getAttribute('data-tenth') || '';
+      document.getElementById('editTwelfth').value = btn.getAttribute('data-twelfth') || '';
+      
+      const status = btn.getAttribute('data-status') || 'NOT_PLACED';
+      document.getElementById('editStatus').value = status;
+      document.getElementById('editCompany').value = btn.getAttribute('data-company') || '';
+      document.getElementById('editPackage').value = btn.getAttribute('data-package') || '';
+
+      toggleEditCompanyFields();
+      document.getElementById('editStudentModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editStudentModal').classList.remove('active');
+    }
+
+    function toggleEditCompanyFields() {
+      const status = document.getElementById('editStatus').value;
+      const isPlaced = (status === 'PLACED');
+      document.getElementById('editCompanyGroup').style.display = isPlaced ? 'flex' : 'none';
+      document.getElementById('editPackageGroup').style.display = isPlaced ? 'flex' : 'none';
+    }
+
+    // Quick Status Modal logic
+    function openStatusModal(btn) {
+      const id = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+      const form = document.getElementById('statusForm');
+      form.action = '/admin/students/' + id + '/status';
+
+      document.getElementById('statusStudentName').innerText = 'Candidate: ' + (name || 'Student #' + id);
+      const status = btn.getAttribute('data-status') || 'NOT_PLACED';
+      document.getElementById('quickStatusSelect').value = status;
+      document.getElementById('quickCompany').value = btn.getAttribute('data-company') || '';
+      document.getElementById('quickPackage').value = btn.getAttribute('data-package') || '';
+
+      toggleQuickCompanyFields();
+      document.getElementById('statusModal').classList.add('active');
+    }
+
+    function closeStatusModal() {
+      document.getElementById('statusModal').classList.remove('active');
+    }
+
+    function toggleQuickCompanyFields() {
+      const status = document.getElementById('quickStatusSelect').value;
+      const isPlaced = (status === 'PLACED');
+      document.getElementById('quickCompanyWrapper').style.display = isPlaced ? 'block' : 'none';
+    }
+
+    // Delete Modal logic
+    function openDeleteModal(id, name) {
+      const form = document.getElementById('deleteForm');
+      form.action = '/admin/students/' + id + '/delete';
+      document.getElementById('deleteTargetName').innerText = name || 'this student';
+      document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('active');
+    }
+
+    // Close on Escape or click outside
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeEditModal();
+        closeStatusModal();
+        closeDeleteModal();
+      }
+    });
+
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+  </script>
 </body>
 </html>

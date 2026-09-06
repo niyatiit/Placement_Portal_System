@@ -4,6 +4,7 @@ import com.placement.portal.model.Application;
 import com.placement.portal.model.JobPosting;
 import com.placement.portal.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
@@ -20,4 +21,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     @Query("SELECT a FROM Application a JOIN FETCH a.jobPosting jp JOIN FETCH jp.company c JOIN FETCH c.user WHERE a.student.id = :sid ORDER BY a.appliedAt DESC")
     List<Application> findByStudentIdDesc(@Param("sid") Long sid);
+
+    @Modifying
+    @Query("DELETE FROM Application a WHERE a.student = :student")
+    void deleteByStudent(@Param("student") Student student);
 }

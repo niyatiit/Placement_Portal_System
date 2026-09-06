@@ -23,4 +23,17 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("SELECT COUNT(s) FROM Student s WHERE s.placementStatus = 'PLACED'")
     Long countPlacedStudents();
+
+    @Query("SELECT s FROM Student s JOIN FETCH s.user WHERE s.id = :id")
+    Optional<Student> findByIdWithUser(@Param("id") Long id);
+
+    @Query("SELECT s FROM Student s JOIN FETCH s.user WHERE " +
+           "(:dept IS NULL OR :dept = '' OR LOWER(s.department) LIKE LOWER(CONCAT('%', :dept, '%'))) AND " +
+           "(:status IS NULL OR s.placementStatus = :status) AND " +
+           "(:search IS NULL OR :search = '' OR LOWER(s.user.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           " OR LOWER(s.rollNumber) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           " OR LOWER(s.user.email) LIKE LOWER(CONCAT('%', :search, '%')))")
+    List<Student> searchStudents(@Param("dept") String dept,
+                                 @Param("status") Student.PlacementStatus status,
+                                 @Param("search") String search);
 }

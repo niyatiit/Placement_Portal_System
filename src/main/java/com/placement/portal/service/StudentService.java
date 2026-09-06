@@ -102,6 +102,75 @@ public class StudentService {
         return studentRepo.save(s);
     }
 
+    public Optional<Student> findById(Long id) {
+        return studentRepo.findByIdWithUser(id);
+    }
+
+    public List<Student> searchStudents(String dept, Student.PlacementStatus status, String search) {
+        return studentRepo.searchStudents(dept, status, search);
+    }
+
+    public Student updateStudent(Long id, String name, String phone, String department,
+                                 String batch, String rollNumber, Double cgpa, Integer backlogs,
+                                 Double tenth, Double twelfth, Student.PlacementStatus status,
+                                 String placedCompany, Double placementPackage) {
+        Student s = studentRepo.findByIdWithUser(id)
+                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+
+        if (s.getUser() != null && name != null && !name.trim().isEmpty()) {
+            s.getUser().setName(name.trim());
+            userRepo.save(s.getUser());
+        }
+
+        s.setPhone(phone);
+        s.setDepartment(department);
+        s.setBatch(batch);
+        s.setRollNumber(rollNumber);
+        s.setCgpa(cgpa);
+        s.setBacklogs(backlogs != null ? backlogs : 0);
+        s.setTenthPercentage(tenth);
+        s.setTwelfthPercentage(twelfth);
+
+        if (status != null) {
+            s.setPlacementStatus(status);
+            if (status == Student.PlacementStatus.PLACED) {
+                s.setPlacedCompany(placedCompany);
+                s.setPlacementPackage(placementPackage);
+            } else {
+                s.setPlacedCompany(null);
+                s.setPlacementPackage(null);
+            }
+        }
+
+        return studentRepo.save(s);
+    }
+
+    public Student updatePlacementStatus(Long id, Student.PlacementStatus status,
+                                         String placedCompany, Double placementPackage) {
+        Student s = studentRepo.findByIdWithUser(id)
+                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+        s.setPlacementStatus(status);
+        if (status == Student.PlacementStatus.PLACED) {
+            s.setPlacedCompany(placedCompany);
+            s.setPlacementPackage(placementPackage);
+        } else {
+            s.setPlacedCompany(null);
+            s.setPlacementPackage(null);
+        }
+        return studentRepo.save(s);
+    }
+
+    public void deleteStudent(Long id) {
+        Student s = studentRepo.findByIdWithUser(id)
+                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+        appRepo.deleteByStudent(s);
+        User u = s.getUser();
+        studentRepo.delete(s);
+        if (u != null) {
+            userRepo.delete(u);
+        }
+    }
+
     public long countPlaced() {
         return studentRepo.countPlacedStudents();
     }
