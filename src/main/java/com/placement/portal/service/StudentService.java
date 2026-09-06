@@ -98,6 +98,24 @@ public class StudentService {
         return appRepo.findByStudentIdDesc(s.getId());
     }
 
+    // Student can withdraw their own application, only while it is still in APPLIED status
+    public void withdrawApplication(Student s, Long appId) {
+        Application a = appRepo.findById(appId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+        if (a.getStudent() == null || !a.getStudent().getId().equals(s.getId())) {
+            throw new RuntimeException("You do not have access to this application");
+        }
+        if (a.getStatus() != Application.ApplicationStatus.APPLIED) {
+            throw new RuntimeException("You can only withdraw an application while it is still Applied. This one is already being processed.");
+        }
+        appRepo.delete(a);
+    }
+
+    // Fetch a single job with ownership-agnostic detail (used for the job details popup)
+    public Optional<JobPosting> getJobById(Long jobId) {
+        return jobRepo.findById(jobId);
+    }
+
     public Student save(Student s) {
         return studentRepo.save(s);
     }

@@ -1,82 +1,465 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>Browse Jobs - PlaceHub</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100vh}
-.sidebar{width:220px;background:#1e293b;color:#fff;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;overflow-y:auto}
-.brand{padding:18px 16px;font-size:18px;font-weight:700;color:#60a5fa;border-bottom:1px solid #334155}
-.nav{flex:1;padding:12px 8px}
-.nav a{display:block;padding:9px 12px;color:#94a3b8;text-decoration:none;border-radius:6px;font-size:13px;margin-bottom:2px}
-.nav a:hover,.nav a.active{background:#334155;color:#fff}
-.nav-section{padding:12px 12px 4px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.8px}
-.sidebar-foot{padding:12px;border-top:1px solid #334155}
-.user-info{padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:8px;font-size:12px;color:#94a3b8}
-.user-name{font-weight:700;color:#e2e8f0;font-size:13px}
-.logout{display:block;width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;text-align:center;text-decoration:none}
-.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
-.topbar{background:#fff;padding:14px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.topbar h1{font-size:17px;font-weight:700;color:#1e293b}
-.content{padding:24px;flex:1}
-.alert{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
-.a-ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
-.a-err{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
-.jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.job-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column}
-.job-card:hover{border-color:#2563eb;box-shadow:0 4px 12px rgba(37,99,235,.1)}
-.job-co{font-size:12px;color:#64748b;margin-bottom:3px}
-.job-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:8px}
-.job-desc{font-size:12px;color:#64748b;margin-bottom:10px;line-height:1.5;flex:1}
-.job-meta{font-size:12px;color:#94a3b8;margin:3px 0}
-.job-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9}
-.pkg{display:inline-block;background:#dcfce7;color:#166534;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700}
-.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.b-green{background:#dcfce7;color:#166534}
-.b-blue{background:#dbeafe;color:#1e40af}
-.btn{display:inline-block;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;text-decoration:none}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-primary:hover{background:#1d4ed8}
-.btn-sm{padding:5px 10px;font-size:12px}
-.empty{text-align:center;color:#94a3b8;padding:60px 20px;background:#fff;border-radius:8px;border:1px solid #e2e8f0}
-.empty-icon{font-size:48px;margin-bottom:12px}
-.eligibility-info{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#1e40af}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Jobs - PlaceHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --sidebar-text: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      border-right: 1px solid #1e293b;
+    }
+
+    .brand {
+      padding: 24px 20px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand span {
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav { flex: 1; padding: 20px 14px; overflow-y: auto; }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #475569;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .nav a:hover { background: var(--sidebar-hover); color: #ffffff; transform: translateX(3px); }
+
+    .nav a.active {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .sidebar-footer { padding: 16px; border-top: 1px solid #1e293b; background: rgba(15, 23, 42, 0.6); }
+
+    .admin-pill { display: flex; align-items: center; gap: 12px; padding: 10px; background: #1e293b; border-radius: 10px; margin-bottom: 12px; }
+
+    .admin-avatar {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0;
+    }
+
+    .admin-meta { overflow: hidden; flex: 1; }
+    .admin-name { font-size: 13px; font-weight: 600; color: #f1f5f9; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+    .admin-role { font-size: 11px; color: #94a3b8; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+
+    .btn-logout {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+      padding: 10px; background: rgba(239, 68, 68, 0.1); color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; font-size: 13px;
+      font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-logout:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    /* Main Area */
+    .main { margin-left: 260px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-left h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: var(--text-main); }
+    .topbar-left p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+    .content { padding: 32px; flex: 1; }
+
+    /* Alerts */
+    .alert-banner { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; font-size: 14px; font-weight: 500; margin-bottom: 24px; }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    .eligibility-info {
+      background: var(--primary-light);
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #3730a3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      padding: 64px 20px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* Jobs Grid */
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .job-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s;
+    }
+
+    .job-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 10px 24px -6px rgba(79, 70, 229, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .job-co { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+    .job-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 10px; letter-spacing: -0.2px; }
+    .job-desc { font-size: 12.5px; color: #64748b; margin-bottom: 12px; line-height: 1.6; flex: 1; }
+    .job-meta { font-size: 12.5px; color: #475569; margin: 4px 0; display: flex; align-items: center; gap: 6px; }
+
+    .job-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+      gap: 8px;
+    }
+
+    .pkg {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .badge-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-blue { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+
+    .btn-outline { background: #ffffff; color: #334155; border-color: #cbd5e1; }
+    .btn-outline:hover { background: #f8fafc; border-color: #94a3b8; }
+
+    .job-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 620px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+
+    .modal-header {
+      padding: 22px 24px;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #fff;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,0.28); }
+
+    .modal-header-inner { position: relative; }
+    #modalCompany { font-size: 12.5px; opacity: 0.9; font-weight: 600; margin-bottom: 4px; }
+    #modalTitle { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; padding-right: 30px; }
+
+    .modal-body { padding: 24px; overflow-y: auto; }
+
+    .modal-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .modal-detail-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .modal-detail-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      margin-bottom: 3px;
+    }
+
+    .modal-detail-val { font-size: 13px; font-weight: 700; color: var(--text-main); }
+
+    .modal-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .modal-desc-text {
+      font-size: 13.5px;
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 70px; }
+      .sidebar .brand span, .sidebar .nav a span, .sidebar .nav-label, .admin-meta { display: none; }
+      .main { margin-left: 70px; }
+      .content { padding: 18px; }
+      .modal-detail-grid { grid-template-columns: 1fr; }
+      .job-footer { flex-direction: column; align-items: stretch; }
+      .job-actions { justify-content: stretch; }
+      .job-actions .btn { flex: 1; }
+    }
+  </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="brand">🎓 PlaceHub</div>
-  <div class="nav">
-    <div class="nav-section">Student Menu</div>
-    <a href="/student/dashboard">🏠 Dashboard</a>
-    <a href="/student/jobs" class="active">🔍 Browse Jobs</a>
-    <a href="/student/applications">📄 My Applications</a>
-    <a href="/student/profile">👤 My Profile</a>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🎓</div>
+    <span>PlaceHub</span>
   </div>
-  <div class="sidebar-foot">
-    <div class="user-info">
-      <div class="user-name" th:text="${student.user.name}">Student</div>
-      <div th:text="${student.rollNumber}">Roll No</div>
+  <nav class="nav">
+    <div class="nav-label">Student Menu</div>
+    <a th:href="@{/student/dashboard}">
+      <span>🏠</span><span>Dashboard</span>
+    </a>
+    <a th:href="@{/student/jobs}" class="active">
+      <span>🔍</span><span>Browse Jobs</span>
+    </a>
+    <a th:href="@{/student/applications}">
+      <span>📄</span><span>My Applications</span>
+    </a>
+    <a th:href="@{/student/profile}">
+      <span>👤</span><span>My Profile</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-pill">
+      <div class="admin-avatar" th:text="${student.user.name != null and !#strings.isEmpty(student.user.name) ? #strings.substring(student.user.name, 0, 1).toUpperCase() : 'S'}">S</div>
+      <div class="admin-meta">
+        <div class="admin-name" th:text="${student.user.name}">Student</div>
+        <div class="admin-role" th:text="${student.rollNumber}">Roll No</div>
+      </div>
     </div>
-    <a href="/auth/logout" class="logout">Logout</a>
+    <a th:href="@{/auth/logout}" class="btn-logout">
+      <span>🚪</span><span>Sign Out</span>
+    </a>
   </div>
-</div>
+</aside>
+
+<!-- Main Content -->
 <div class="main">
-  <div class="topbar">
-    <h1>Browse Jobs</h1>
-    <span style="font-size:13px;color:#64748b"><span th:text="${#lists.size(jobs)}">0</span> eligible jobs found</span>
-  </div>
-  <div class="content">
-    <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
-    <div th:if="${error}" class="alert a-err" th:text="${error}"></div>
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Browse Jobs</h1>
+      <p><span th:text="${#lists.size(jobs)}">0</span> eligible job(s) found for you</p>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div th:if="${success}" class="alert-banner alert-success">
+      <span style="font-size: 18px;">✅</span>
+      <span th:text="${success}">Success</span>
+    </div>
+    <div th:if="${error}" class="alert-banner alert-error">
+      <span style="font-size: 18px;">❌</span>
+      <span th:text="${error}">Error</span>
+    </div>
 
     <div class="eligibility-info">
-      ℹ Jobs shown below are filtered based on your CGPA (<strong th:text="${student.cgpa}">0</strong>) and backlogs (<strong th:text="${student.backlogs}">0</strong>).
+      <span style="font-size: 16px;">ℹ️</span>
+      <span>Jobs shown are filtered based on your CGPA (<strong th:text="${student.cgpa}">0</strong>) and backlogs (<strong th:text="${student.backlogs}">0</strong>).</span>
     </div>
 
-    <div th:if="${#lists.isEmpty(jobs)}" class="empty">
+    <div th:if="${#lists.isEmpty(jobs)}" class="empty-state">
       <div class="empty-icon">🔍</div>
-      <div style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:8px">No Eligible Jobs Found</div>
+      <div style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">No Eligible Jobs Found</div>
       <div>Jobs are matched based on your CGPA and backlogs. Check back later for new postings.</div>
     </div>
 
@@ -89,20 +472,146 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;display:flex;min-height:100
         <div class="job-meta">💼 <span th:text="${job.jobType.name().replace('_',' ')}">Type</span></div>
         <div class="job-meta">🎓 Min CGPA: <span th:text="${job.minCgpa}">0</span></div>
         <div class="job-meta">📅 Deadline: <span th:text="${job.applicationDeadline}">Date</span></div>
-        <div th:if="${job.driveDate != null}" class="job-meta">📆 Drive: <span th:text="${job.driveDate}">Date</span></div>
+
         <div class="job-footer">
           <span class="pkg" th:text="${job.packageLpa + ' LPA'}">Package</span>
-          <div>
-            <span th:if="${appliedIds.contains(job.id)}" class="badge b-green">✓ Applied</span>
+          <div class="job-actions">
+            <button type="button" class="btn btn-outline"
+                    th:data-id="${job.id}"
+                    th:data-title="${job.title}"
+                    th:data-company="${job.company.companyName}"
+                    th:data-industry="${job.company.industry != null ? job.company.industry : ''}"
+                    th:data-location="${job.location != null ? job.location : 'Not specified'}"
+                    th:data-type="${job.jobType.name().replace('_',' ')}"
+                    th:data-package="${job.packageLpa != null ? job.packageLpa + ' LPA' : '-'}"
+                    th:data-mincgpa="${job.minCgpa != null ? job.minCgpa : '-'}"
+                    th:data-maxbacklogs="${job.maxBacklogs != null ? job.maxBacklogs : '-'}"
+                    th:data-departments="${job.eligibleDepartments != null and !#strings.isEmpty(job.eligibleDepartments) ? job.eligibleDepartments : 'All Departments'}"
+                    th:data-deadline="${job.applicationDeadline}"
+                    th:data-drivedate="${job.driveDate != null ? job.driveDate : ''}"
+                    th:data-description="${job.description != null ? job.description : 'No description provided.'}"
+                    th:data-applied="${appliedIds.contains(job.id)}"
+                    onclick="openJobModal(this)">
+              👁 View Details
+            </button>
+            <span th:if="${appliedIds.contains(job.id)}" class="badge badge-green">✓ Applied</span>
             <form th:if="${!appliedIds.contains(job.id)}"
                   th:action="@{'/student/apply/' + ${job.id}}" method="post" style="display:inline">
-              <button type="submit" class="btn btn-primary btn-sm">Apply Now</button>
+              <button type="submit" class="btn btn-primary">Apply Now</button>
             </form>
           </div>
         </div>
       </div>
     </div>
+
+  </main>
+</div>
+
+<!-- Job Details Modal -->
+<div id="jobModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-header-inner">
+        <button type="button" class="modal-close-btn" onclick="closeJobModal()">✕</button>
+        <div id="modalCompany">Company</div>
+        <div id="modalTitle">Job Title</div>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-detail-grid">
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">📍 Location</div>
+          <div class="modal-detail-val" id="modalLocation">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">💼 Job Type</div>
+          <div class="modal-detail-val" id="modalType">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">💰 Package</div>
+          <div class="modal-detail-val" id="modalPackage">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">🎓 Min CGPA</div>
+          <div class="modal-detail-val" id="modalMinCgpa">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">⚠️ Max Backlogs</div>
+          <div class="modal-detail-val" id="modalMaxBacklogs">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">📅 Deadline</div>
+          <div class="modal-detail-val" id="modalDeadline">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">📆 Drive Date</div>
+          <div class="modal-detail-val" id="modalDriveDate">-</div>
+        </div>
+        <div class="modal-detail-item">
+          <div class="modal-detail-label">🏛 Eligible Departments</div>
+          <div class="modal-detail-val" id="modalDepartments">-</div>
+        </div>
+      </div>
+
+      <div class="modal-section-title">Job Description</div>
+      <div class="modal-desc-text" id="modalDescription">Description</div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeJobModal()">Close</button>
+      <span id="modalAppliedBadge" class="badge badge-green" style="display:none;">✓ Already Applied</span>
+      <form id="modalApplyForm" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-primary">Apply Now</button>
+      </form>
+    </div>
   </div>
 </div>
+
+<script>
+  function openJobModal(btn) {
+    const id = btn.getAttribute('data-id');
+    document.getElementById('modalCompany').innerText = btn.getAttribute('data-company') +
+            (btn.getAttribute('data-industry') ? ' • ' + btn.getAttribute('data-industry') : '');
+    document.getElementById('modalTitle').innerText = btn.getAttribute('data-title');
+    document.getElementById('modalLocation').innerText = btn.getAttribute('data-location');
+    document.getElementById('modalType').innerText = btn.getAttribute('data-type');
+    document.getElementById('modalPackage').innerText = btn.getAttribute('data-package');
+    document.getElementById('modalMinCgpa').innerText = btn.getAttribute('data-mincgpa');
+    document.getElementById('modalMaxBacklogs').innerText = btn.getAttribute('data-maxbacklogs');
+    document.getElementById('modalDeadline').innerText = btn.getAttribute('data-deadline');
+    document.getElementById('modalDriveDate').innerText = btn.getAttribute('data-drivedate') || 'Not scheduled yet';
+    document.getElementById('modalDepartments').innerText = btn.getAttribute('data-departments');
+    document.getElementById('modalDescription').innerText = btn.getAttribute('data-description');
+
+    const applied = btn.getAttribute('data-applied') === 'true';
+    const form = document.getElementById('modalApplyForm');
+    const badge = document.getElementById('modalAppliedBadge');
+    if (applied) {
+      form.style.display = 'none';
+      badge.style.display = 'inline-flex';
+    } else {
+      form.style.display = 'inline';
+      badge.style.display = 'none';
+      form.action = '/student/apply/' + id;
+    }
+
+    document.getElementById('jobModal').classList.add('active');
+  }
+
+  function closeJobModal() {
+    document.getElementById('jobModal').classList.remove('active');
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeJobModal();
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  });
+</script>
 </body>
 </html>

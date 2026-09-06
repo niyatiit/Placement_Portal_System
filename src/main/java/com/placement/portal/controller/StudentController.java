@@ -8,6 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequestMapping("/student")
 public class StudentController {
@@ -64,6 +67,17 @@ public class StudentController {
         return "student/applications";
     }
 
+    @PostMapping("/applications/{appId}/withdraw")
+    public String withdraw(@PathVariable Long appId, Authentication auth, RedirectAttributes ra) {
+        try {
+            studentService.withdrawApplication(getStudent(auth), appId);
+            ra.addFlashAttribute("success", "Application withdrawn successfully.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/student/applications";
+    }
+
     @GetMapping("/profile")
     public String profile(Model model, Authentication auth) {
         model.addAttribute("student", getStudent(auth));
@@ -74,11 +88,22 @@ public class StudentController {
     public String updateProfile(@RequestParam(required = false) String phone,
                                 @RequestParam(required = false) Double cgpa,
                                 @RequestParam(required = false) String resumePath,
+                                @RequestParam(required = false) String skillsInput,
                                 Authentication auth, RedirectAttributes ra) {
         Student s = getStudent(auth);
         if (phone != null && !phone.isEmpty()) s.setPhone(phone);
         if (cgpa != null) s.setCgpa(cgpa);
         if (resumePath != null && !resumePath.isEmpty()) s.setResumePath(resumePath);
+        if (skillsInput != null) {
+            List<String> skills = new ArrayList<>();
+            for (String sk : skillsInput.split(",")) {
+                String trimmed = sk.trim();
+                if (!trimmed.isEmpty() && !skills.contains(trimmed)) {
+                    skills.add(trimmed);
+                }
+            }
+            s.setSkills(skills);
+        }
         studentService.save(s);
         ra.addFlashAttribute("success", "Profile updated!");
         return "redirect:/student/profile";
