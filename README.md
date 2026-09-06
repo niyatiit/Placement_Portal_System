@@ -13,6 +13,10 @@
   from student registration and job applications to company management and admin oversight.
 </p>
 
+<p align="center">
+  🔗 <strong>Live Demo:</strong> <a href="https://placementportalsystem-production.up.railway.app/">https://placementportalsystem-production.up.railway.app/</a>
+</p>
+
 ---
 
 ## 📋 Table of Contents
@@ -26,7 +30,7 @@
 - [Demo Credentials](#-demo-credentials)
 - [Screenshots](#-screenshots)
 - [API & URL Routes](#-url-routes)
-- [Author](#-author)
+- [Authors](#-authors)
 
 ---
 
@@ -384,22 +388,11 @@ public class DataInitializer implements CommandLineRunner {
 
 ---
 
+## 👤 Authors
 
-
-## 👤 Author
-
-**Akshay Uparikar**
-- 🔗 LinkedIn: [linkedin.com/in/akshay-uparikar](https://www.linkedin.com/in/akshay-uparikar/)
-- 💻 GitHub: [github.com/akshayuparikar](https://github.com/akshayuparikar)
-- 🟠 LeetCode: [leetcode.com/u/akshayuparikar](https://leetcode.com/u/akshayuparikar/)
-- 🟢 HackerRank: [hackerrank.com/profile/akshayuparikar21](https://www.hackerrank.com/profile/akshayuparikar21)
-- 📧 Email: [akshayuparikar2002@gmail.com](mailto:akshayuparikar2002@gmail.com)
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+- **Niyati Patel**
+- **Stuti Pandya**
+- **Dharmesh Prajapati**
 
 ---
 
