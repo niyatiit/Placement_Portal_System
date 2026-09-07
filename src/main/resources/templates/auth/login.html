@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>Login - PlaceHub</title>
+  <meta charset="UTF-8"><title>Login - PlaceHub</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -141,6 +141,14 @@
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
 
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
     /* Login Button */
     .btn {
       width: 100%;
@@ -252,17 +260,21 @@
     <input type="email" name="email" placeholder="Enter your email" required autofocus>
     <label>Password</label>
     <input type="password" name="password" placeholder="Enter your password" required>
+    <label style="display:flex; align-items:center; gap:8px; font-weight:500; text-transform:none; letter-spacing:normal; cursor:pointer; margin-top:-6px;">
+      <input type="checkbox" name="remember-me" checked style="width:16px; height:16px; margin:0;">
+      Keep me signed in on this device
+    </label>
     <button type="submit" class="btn">Login</button>
   </form>
 
   <div class="link">New here? <a href="/auth/register">Create an account</a></div>
 
-<!--  <div class="demo">-->
-<!--    <b>🔑 Demo Login Credentials</b>-->
-<!--    <b>Admin:</b> admin@placehub.com / admin123<br>-->
-<!--    <b>Student:</b> rahul@student.com / student123<br>-->
-<!--    <b>Company:</b> hr@techcorp.com / company123-->
-<!--  </div>-->
+  <!--  <div class="demo">-->
+  <!--    <b>🔑 Demo Login Credentials</b>-->
+  <!--    <b>Admin:</b> admin@placehub.com / admin123<br>-->
+  <!--    <b>Student:</b> rahul@student.com / student123<br>-->
+  <!--    <b>Company:</b> hr@techcorp.com / company123-->
+  <!--  </div>-->
 </div>
 </body>
 </html>

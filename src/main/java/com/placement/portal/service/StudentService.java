@@ -35,6 +35,8 @@ public class StudentService {
                             Double tenth, Double twelfth) {
         if (userRepo.existsByEmail(email))
             throw new RuntimeException("Email already registered!");
+        if (rollNumber != null && studentRepo.existsByRollNumber(rollNumber))
+            throw new RuntimeException("A student with this roll number is already registered!");
 
         User u = new User();
         u.setName(name);

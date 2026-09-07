@@ -450,12 +450,12 @@
 
           <div class="form-group">
             <label class="search-label">Application Deadline *</label>
-            <input type="date" name="applicationDeadline" class="form-control" required>
+            <input type="date" name="applicationDeadline" class="form-control" th:min="${T(java.time.LocalDate).now()}" required>
           </div>
 
           <div class="form-group">
             <label class="search-label">Drive / Interview Date</label>
-            <input type="date" name="driveDate" class="form-control">
+            <input type="date" name="driveDate" class="form-control" th:min="${T(java.time.LocalDate).now()}">
           </div>
 
           <div class="form-group col-span-2">

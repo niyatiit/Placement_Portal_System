@@ -131,6 +131,13 @@ public class CompanyService {
                               JobPosting.JobType type, Double pkg, Double minCgpa,
                               Integer maxBacklogs, String depts,
                               LocalDate deadline, LocalDate drive) {
+        LocalDate today = LocalDate.now();
+        if (deadline != null && deadline.isBefore(today)) {
+            throw new RuntimeException("Application deadline cannot be a past date. Please select today or a future date.");
+        }
+        if (drive != null && drive.isBefore(today)) {
+            throw new RuntimeException("Drive date cannot be a past date. Please select today or a future date.");
+        }
         JobPosting j = new JobPosting();
         j.setCompany(c);
         j.setTitle(title);

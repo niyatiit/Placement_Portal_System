@@ -190,6 +190,9 @@ public class AdminController {
                             RedirectAttributes ra) {
         try {
             JobPosting j = jobRepo.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+            if (applicationDeadline != null && applicationDeadline.isBefore(java.time.LocalDate.now())) {
+                throw new RuntimeException("Application deadline cannot be set to a past date.");
+            }
             j.setTitle(title);
             j.setDescription(description);
             j.setPackageLpa(packageLpa);
