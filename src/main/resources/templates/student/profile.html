@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>My Profile - PlaceHub</title>
+  <meta charset="UTF-8"><title>My Profile - PlaceHub</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -213,6 +213,12 @@
       background: var(--success-light);
       color: #065f46;
       border: 1px solid #a7f3d0;
+    }
+
+    .a-err {
+      background: var(--danger-light, #fef2f2);
+      color: #991b1b;
+      border: 1px solid #fecaca;
     }
 
     /* Two Column Layout */
@@ -560,6 +566,7 @@
   <div class="topbar"><h1>My Profile</h1></div>
   <div class="content">
     <div th:if="${success}" class="alert a-ok" th:text="${success}"></div>
+    <div th:if="${error}" class="alert a-err" th:text="${error}"></div>
     <div class="grid2">
 
       <!-- Profile Summary Card -->
@@ -569,8 +576,8 @@
         <div class="profile-email" th:text="${student.user.email}">email</div>
         <div style="text-align:center">
           <span class="badge"
-            th:classappend="${student.placementStatus.name() == 'PLACED'} ? 'b-green' : 'b-yellow'"
-            th:text="${student.placementStatus.name().replace('_',' ')}">Status</span>
+                th:classappend="${student.placementStatus.name() == 'PLACED'} ? 'b-green' : 'b-yellow'"
+                th:text="${student.placementStatus.name().replace('_',' ')}">Status</span>
         </div>
         <div class="info-grid">
           <div class="info-item"><label>Roll Number</label><span th:text="${student.rollNumber}">-</span></div>
@@ -610,6 +617,11 @@
           <div class="grp">
             <label class="form-label">Resume Link (Google Drive / URL)</label>
             <input type="url" name="resumePath" th:value="${student.resumePath}" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="grp">
+            <label class="form-label">Skills</label>
+            <input type="text" name="skillsInput" th:value="${#strings.listJoin(student.skills, ', ')}" placeholder="Java, Spring Boot, React, SQL">
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Separate each skill with a comma. This replaces your current skill list.</div>
           </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>

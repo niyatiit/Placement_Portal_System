@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8"><title>My Applications - PlaceHub</title>
+  <meta charset="UTF-8"><title>My Applications - PlaceHub</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -196,6 +196,34 @@
     .content {
       padding: 32px;
       flex: 1;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* Withdraw button */
+    .btn-withdraw {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+    .btn-withdraw:hover {
+      background: #dc2626;
+      color: #fff;
     }
 
     /* Main Card */
@@ -552,6 +580,15 @@
     <span style="font-size:13px;color:#64748b"><span th:text="${#lists.size(apps)}">0</span> total</span>
   </div>
   <div class="content">
+    <div th:if="${success}" class="alert-banner alert-success">
+      <span style="font-size: 18px;">✅</span>
+      <span th:text="${success}">Success</span>
+    </div>
+    <div th:if="${error}" class="alert-banner alert-error">
+      <span style="font-size: 18px;">❌</span>
+      <span th:text="${error}">Error</span>
+    </div>
+
     <div class="status-legend">
       <div class="status-legend-title">Application Status Flow</div>
       <div class="flow">
@@ -579,28 +616,37 @@
     <div th:if="${!#lists.isEmpty(apps)}" class="card">
       <table>
         <thead>
-          <tr><th>Job Title</th><th>Company</th><th>Package</th><th>Applied On</th><th>Status</th><th>Remarks</th></tr>
+        <tr><th>Job Title</th><th>Company</th><th>Package</th><th>Applied On</th><th>Status</th><th>Remarks</th><th>Action</th></tr>
         </thead>
         <tbody>
-          <tr th:each="app : ${apps}">
-            <td>
-              <div style="font-weight:600" th:text="${app.jobPosting.title}">Title</div>
-              <div style="font-size:11px;color:#94a3b8" th:text="${app.jobPosting.location}">Location</div>
-            </td>
-            <td th:text="${app.jobPosting.company.companyName}">Company</td>
-            <td><span class="pkg" th:text="${app.jobPosting.packageLpa + ' LPA'}">-</span></td>
-            <td style="font-size:12px;color:#64748b" th:text="${app.appliedAt != null ? #temporals.format(app.appliedAt,'dd MMM yyyy') : '-'}">Date</td>
-            <td>
+        <tr th:each="app : ${apps}">
+          <td>
+            <div style="font-weight:600" th:text="${app.jobPosting.title}">Title</div>
+            <div style="font-size:11px;color:#94a3b8" th:text="${app.jobPosting.location}">Location</div>
+          </td>
+          <td th:text="${app.jobPosting.company.companyName}">Company</td>
+          <td><span class="pkg" th:text="${app.jobPosting.packageLpa + ' LPA'}">-</span></td>
+          <td style="font-size:12px;color:#64748b" th:text="${app.appliedAt != null ? #temporals.format(app.appliedAt,'dd MMM yyyy') : '-'}">Date</td>
+          <td>
               <span class="badge"
-                th:classappend="${app.status.name() == 'SELECTED'} ? 'b-green' :
+                    th:classappend="${app.status.name() == 'SELECTED'} ? 'b-green' :
                                 (${app.status.name() == 'REJECTED'} ? 'b-red' :
                                 (${app.status.name() == 'APPLIED'} ? 'b-blue' :
                                 (${app.status.name() == 'SHORTLISTED'} ? 'b-yellow' :
                                 (${app.status.name() == 'ON_HOLD'} ? 'b-gray' : 'b-purple'))))"
-                th:text="${app.status.name().replace('_',' ')}">Status</span>
-            </td>
-            <td style="font-size:12px;color:#64748b" th:text="${app.remarks != null ? app.remarks : '-'}">-</td>
-          </tr>
+                    th:text="${app.status.name().replace('_',' ')}">Status</span>
+          </td>
+          <td style="font-size:12px;color:#64748b" th:text="${app.remarks != null ? app.remarks : '-'}">-</td>
+          <td>
+            <form th:if="${app.status.name() == 'APPLIED'}"
+                  th:action="@{'/student/applications/' + ${app.id} + '/withdraw'}"
+                  method="post"
+                  onsubmit="return confirm('Withdraw this application? This cannot be undone.');">
+              <button type="submit" class="btn btn-withdraw">✕ Withdraw</button>
+            </form>
+            <span th:if="${app.status.name() != 'APPLIED'}" style="font-size:11px;color:#cbd5e1;">—</span>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
